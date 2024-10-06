@@ -1,7 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 
-Future<void> loginWithEmailAndPassword(String email, String password) async {
+Future<void> signupWithPhoneNumber(String number) async {
+
+}
+
+Future<void> signinWithPhoneNumber(String number) async {
+
+}
+
+Future<void> signupWithEmailAndPassword(String email, String password) async {
+
+}
+
+Future<void> signinWithEmailAndPassword(String email, String password) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,

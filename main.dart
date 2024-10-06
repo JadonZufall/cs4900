@@ -36,7 +36,7 @@ class LoginScreen extends StatelessWidget {
   void _login() {
     String username = _usernameController.text;
     String password = _passwordController.text;
-    loginWithEmailAndPassword(username, password);
+    signinWithEmailAndPassword(username, password);
   }
 
   @override
