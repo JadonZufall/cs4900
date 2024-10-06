@@ -1,15 +1,27 @@
 # Setup
+
+
+
+
 ## MacOS
 For my env I am using ZSH and Homebrew as my package manager.
 
+
+
+
 ### Installing Android Studio
 Install android studio.
+
+
 
 
 ### Installing Homebrew
 You only need to do this if you don't already have homebrew installed on your system.
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+
+
+
 
 ### Project Setup
 Navigate to the directory you wish to contain the repo.
@@ -29,6 +41,9 @@ Should be located in a path something like this.
 `/Users/<username>/Caskroom/flutter/3.24.3/flutter`
 
 Add the SDK path to android studio
+
+
+
 
 ### Firebase Setup
 Install firebase command line interface.
@@ -59,5 +74,29 @@ Then from the root of the project run
 
 `flutterfire configure --project=cs4900-67bee`
 
-This automatically registers your per-platform apps with Firebase and adds a lib/firebase_options.dart configuration file to your Flutter project. 
+1. Selected the options for IOS and Android development.
+2. Package name was *com.senior_design_group*
 
+*This automatically registers your per-platform apps with Firebase and adds
+a lib/firebase_options.dart configuration file to your Flutter project.*
+
+
+If you are having an issue mentioning ruby and gems with the Ruby Framework here is what fixed it.
+
+`sudo gem install xcodeproj`
+
+
+Then add firebase core to flutter
+
+`flutter pub add firebase_core`
+
+
+Get flutter packages
+`flutter packages get`
+
+
+Update flutter packages
+`flutter packages upgrade`
+
+
+Restart android studio
