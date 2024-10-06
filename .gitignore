@@ -2,6 +2,7 @@
 lib
 android
 ios
+firebase-debug.log
 
 # Miscellaneous
 *.class
