@@ -98,5 +98,7 @@ Get flutter packages
 Update flutter packages
 `flutter packages upgrade`
 
-
 Restart android studio
+
+Add firebase authentication
+`flutter pub add firebase_auth`
