@@ -10,8 +10,30 @@ Future<void> signinWithPhoneNumber(String number) async {
 }
 
 Future<void> signupWithEmailAndPassword(String email, String password) async {
+  try {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    print("Account created!");
+    return;
 
+  } on FirebaseAuthException catch (e) {
+    if (e.code == 'weak-password') {
+      print("Weak password!");
+    }
+    else if (e.code == 'email-already-in-use') {
+      print("Email already in use!");
+    }
+    else {
+      print("Unknown firebase auth error");
+    }
+  }
+  catch (e) {
+    print("Something went wrong!");
+  }
 }
+
 
 Future<void> signinWithEmailAndPassword(String email, String password) async {
   try {
