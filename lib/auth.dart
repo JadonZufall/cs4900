@@ -71,3 +71,7 @@ Future<void> signinWithEmailAndPassword(String email, String password) async {
   }
 }
 
+Future<void> signout() {
+  return FirebaseAuth.instance.signOut();
+}
+
