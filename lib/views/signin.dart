@@ -1,7 +1,11 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+
+import 'package:cs4900/auth.dart';
 import 'package:cs4900/views/signup.dart';
+
 
 /*
   Displays error text if the login is invalid.
@@ -18,6 +22,17 @@ class SignInScreen extends StatelessWidget {
 
   void _signin() {
     log("Signin button pressed");
+    signinWithEmailAndPassword(_usernameController.text, _passwordController.text);
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String username;
+    if (auth.currentUser != null) {
+      log("Logged in as...");
+      log(auth.currentUser!.displayName ?? "null");
+    }
+    else {
+      log("Failed to log in");
+    }
+    // TODO routing.
   }
 
   @override

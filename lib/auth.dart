@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -29,22 +30,22 @@ Future<void> signupWithEmailAndPassword(String email, String password) async {
       email: email,
       password: password,
     );
-    print("Account created!");
+    log("Account created!");
     return;
 
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
-      print("Weak password!");
+      log("Weak password!");
     }
     else if (e.code == 'email-already-in-use') {
-      print("Email already in use!");
+      log("Email already in use!");
     }
     else {
-      print("Unknown firebase auth error");
+      log("Unknown firebase auth error");
     }
   }
   catch (e) {
-    print("Something went wrong!");
+    log("Something went wrong!");
   }
 }
 
@@ -55,14 +56,15 @@ Future<void> signinWithEmailAndPassword(String email, String password) async {
       email: email,
       password: password,
     );
-    print("User was logged in");
+
+    log("User was logged in");
 
   } on FirebaseAuthException catch (e) {
     if (e.code == 'user-not-found') {
-      print('No user found.');
+      log('No user found.');
     }
     else if (e.code == 'wrong-password') {
-      print('Invalid password.');
+      log('Invalid password.');
     }
 
   }
