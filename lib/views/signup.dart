@@ -1,6 +1,9 @@
 import 'dart:developer';
-import 'package:cs4900/auth.dart';
 import 'package:flutter/material.dart';
+
+import 'package:cs4900/auth.dart';
+import 'package:cs4900/views/signin.dart';
+
 
 
 class SignUpScreen extends StatelessWidget {
@@ -9,9 +12,10 @@ class SignUpScreen extends StatelessWidget {
 
   SignUpScreen({super.key});
 
-  void _signup() {
+  void _signup(BuildContext context) {
     log("Signup button pressed");
     signupWithEmailAndPassword(_usernameController.text.trim(), _passwordController.text.trim());
+    Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()));
   }
 
   @override
@@ -61,7 +65,7 @@ class SignUpScreen extends StatelessWidget {
               obscureText: true,
             ),
 
-            ElevatedButton(onPressed: _signup, child: const Text("Sign Up")),
+            ElevatedButton(onPressed: () {_signup(context);}, child: const Text("Sign Up")),
 
           ]
         ),

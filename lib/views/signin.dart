@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
+
 import 'package:cs4900/auth.dart';
 import 'package:cs4900/views/signup.dart';
-
+import 'package:cs4900/views/home.dart';
 
 /*
   Displays error text if the login is invalid.
@@ -20,7 +21,7 @@ class SignInScreen extends StatelessWidget {
 
   SignInScreen({super.key});
 
-  void _signin() {
+  void _signin(BuildContext context) {
     log("Signin button pressed");
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
@@ -28,6 +29,7 @@ class SignInScreen extends StatelessWidget {
       }
       else {
         log('User is signed in!');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
       }
     });
     signinWithEmailAndPassword(_usernameController.text.trim(), _passwordController.text.trim());
@@ -96,7 +98,7 @@ class SignInScreen extends StatelessWidget {
             ),
 
             // Sign In button.
-            ElevatedButton(onPressed: _signin, child: const Text("Sign In")),
+            ElevatedButton(onPressed: () {_signin(context);}, child: const Text("Sign In")),
 
 
 
