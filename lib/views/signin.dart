@@ -22,7 +22,16 @@ class SignInScreen extends StatelessWidget {
 
   void _signin() {
     log("Signin button pressed");
-    signinWithEmailAndPassword(_usernameController.text, _passwordController.text);
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        log('User is currently signed out!');
+      }
+      else {
+        log('User is signed in!');
+      }
+    });
+    signinWithEmailAndPassword(_usernameController.text.trim(), _passwordController.text.trim());
+
     FirebaseAuth auth = FirebaseAuth.instance;
     String username;
     if (auth.currentUser != null) {
@@ -33,6 +42,10 @@ class SignInScreen extends StatelessWidget {
       log("Failed to log in");
     }
     // TODO routing.
+  }
+
+  void _signup() {
+
   }
 
   @override
@@ -84,6 +97,8 @@ class SignInScreen extends StatelessWidget {
 
             // Sign In button.
             ElevatedButton(onPressed: _signin, child: const Text("Sign In")),
+
+
 
             Material(
               color: Colors.transparent,

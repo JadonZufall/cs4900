@@ -59,7 +59,8 @@ Future<void> signinWithEmailAndPassword(String email, String password) async {
 
     log("User was logged in");
 
-  } on FirebaseAuthException catch (e) {
+  }
+  on FirebaseAuthException catch (e) {
     if (e.code == 'user-not-found') {
       log('No user found.');
     }
