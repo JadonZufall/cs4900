@@ -34,6 +34,7 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   void _login() {
+    // Should be ran when the button is pressed but doesn't seem to run properly
     String username = _usernameController.text;
     String password = _passwordController.text;
     signinWithEmailAndPassword(username, password);

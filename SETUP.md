@@ -107,6 +107,12 @@ Add firebase authentication
 ### Android Emulation
 Click on Device Manager on the left side of Android Studio and create and run an android device
 
+Fixing "No matching client found for package name '...'"
+Go to `android/app/google-services.json`
+find package name should be something like com.senior_design_group.cs4900
+Go to `andoid/app/build.gradle`
+find the namespace, change the `android/apps/google-services.json` to match the gradle, do not change the gradle.
+
 
 ### IOS Emulation
 if you are on a macbook turn on power saving otherwise your macbook will cook itself.
