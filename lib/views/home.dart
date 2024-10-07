@@ -9,11 +9,11 @@ import "package:cs4900/views/signin.dart";
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  void _signout() {
+  void _signout(BuildContext context) {
     log("_signout button pressed.");
     signoutOfAccountInstance();
     log("_signout completed");
-
+    Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()));
   }
 
   @override
@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         children: [
           // All requires elements in the body should be contained here.
-          ElevatedButton(onPressed: _signout, child: const Text("Sign Out")),
+          ElevatedButton(onPressed: () {_signout(context);}, child: const Text("Sign Out")),
         ],
       ),
     );
