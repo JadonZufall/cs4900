@@ -24,7 +24,6 @@ class HomeScreen extends StatelessWidget {
       username = auth.currentUser!.displayName!;
     }
 
-
     if (auth.currentUser == null) {
       // Redirect the user to the signin page.
       log("User is not authenticated, redirecting user to signin page");
