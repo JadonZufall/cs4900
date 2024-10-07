@@ -2,24 +2,33 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import "package:cs4900/views/signin.dart";
+
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     const Text title = Text("Home");
 
     // Check if the user is logged in.
-    String? username;
+
     FirebaseAuth auth = FirebaseAuth.instance;
-    if (auth.currentUser == null) {
-      //
-      log("User is not authenticated, redirecting user to signin page");
-      Navigator.of(context).pushNamed("signin");
+
+    String username;
+    if (auth.currentUser?.displayName == null) {
+      username = "null";
     }
     else {
-      username = auth.currentUser?.displayName;
+      username = auth.currentUser!.displayName!;
+    }
+
+
+    if (auth.currentUser == null) {
+      // Redirect the user to the signin page.
+      log("User is not authenticated, redirecting user to signin page");
+      return SignInScreen().build(context);
     }
 
     AppBar appBar = AppBar(
@@ -28,6 +37,8 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
       foregroundColor: Colors.white,
     );
+
+    Text usernameLabel = Text(username);
 
     Padding body = const Padding(
       padding: EdgeInsets.all(16.0),
