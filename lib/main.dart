@@ -10,6 +10,7 @@ import 'views/home.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  await FirebaseAuth.instance.useAuthEmulator("localhost", 9999);
   runApp(const MyApp());
 }
 
