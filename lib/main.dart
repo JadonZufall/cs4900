@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
 import '../auth.dart';
+import 'views/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,10 +20,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Instagram Clone App',
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 18, 25, 33),
-      ),
-      home: LoginScreen(),
+      theme: ThemeData(scaffoldBackgroundColor: const Color.fromARGB(255, 18, 25, 33), ),
+      home: HomeScreen(),
     );
   }
 }

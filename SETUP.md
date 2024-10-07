@@ -1,37 +1,39 @@
 # Setup
 
+## Window
+The documentation on this process is not complete as I have no personally set this up in a windows
+environment.
 
+### Android Studio
+Install [Android Studio](https://developer.android.com).
 
+### Flutter
+Install [Flutter](https://docs.flutter.dev/get-started/install/windows/mobile) sdk.
 
 ## MacOS
 For my env I am using ZSH and Homebrew as my package manager.
 I am using android studio for build process as well as build in android emulator.
 
-
-
-
 ### Installing Android Studio
-Install android studio.
+Install [Android Studio](https://developer.android.com).
 
-
-
-
-### Installing Homebrew
+### Installing Homebrew (Optional)
 You only need to do this if you don't already have homebrew installed on your system.
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 
+### Installing Flutter (Without Homebrew)
+Install (https://flutter.dev) sdk.
 
+### Installing Flutter (Homebrew)
+Install the flutter cask.
 
+`brew install --cask flutter`
 
 ### Project Setup
 Navigate to the directory you wish to contain the repo.
 
 `git clone https://github.com/JadonZufall/cs4900`
-
-Install the flutter cask.
-
-`brew install --cask flutter`
 
 In order to find out the SDK path of flutter run.
 
@@ -42,8 +44,6 @@ Should be located in a path something like this.
 `/Users/<username>/Caskroom/flutter/3.24.3/flutter`
 
 Add the SDK path to android studio
-
-
 
 
 ### Firebase Setup
@@ -108,13 +108,19 @@ Add firebase authentication
 Click on Device Manager on the left side of Android Studio and create and run an android device
 
 Fixing "No matching client found for package name '...'"
+
 Go to `android/app/google-services.json`
+
 find package name should be something like com.senior_design_group.cs4900
+
 Go to `andoid/app/build.gradle`
+
 find the namespace, change the `android/apps/google-services.json` to match the gradle, do not change the gradle.
 
 Fixing bad version issue with the android api
+
 `android/app/build.gradle`
+
 change minSdk to 23 instead of flutter.minSdkVersion
 
 
@@ -142,7 +148,9 @@ required for iphone emulation.
 
 If it fails to run because the plugin firebase_auth requires a higher minimum iOS deployment
 version then go to 
+
 `ios/Flutter/AppFrameworkInfo.plist`
+
 then change the value MinimumOSVersion to 13.0
 
 Another thing to try is
