@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:cs4900/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -7,6 +8,13 @@ import "package:cs4900/views/signin.dart";
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
+
+  void _signout() {
+    log("_signout button pressed.");
+    signoutOfAccountInstance();
+    log("_signout completed");
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +47,12 @@ class HomeScreen extends StatelessWidget {
 
     Text usernameLabel = Text(username);
 
-    Padding body = const Padding(
-      padding: EdgeInsets.all(16.0),
+    Padding body = Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           // All requires elements in the body should be contained here.
-
+          ElevatedButton(onPressed: _signout, child: const Text("Sign Out")),
         ],
       ),
     );
