@@ -113,6 +113,10 @@ find package name should be something like com.senior_design_group.cs4900
 Go to `andoid/app/build.gradle`
 find the namespace, change the `android/apps/google-services.json` to match the gradle, do not change the gradle.
 
+Fixing bad version issue with the android api
+`android/app/build.gradle`
+change minSdk to 23 instead of flutter.minSdkVersion
+
 
 ### IOS Emulation
 if you are on a macbook turn on power saving otherwise your macbook will cook itself.
