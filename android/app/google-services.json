@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "515033047744",
+    "project_id": "cs4900-67bee",
+    "storage_bucket": "cs4900-67bee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515033047744:android:06aa0a1c022fd22c93c325",
+        "android_client_info": {
+          "package_name": "com.senior_design_group.cs4900"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApl15XfkjK0LSDKpMYFey2QdsLOYukqMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
