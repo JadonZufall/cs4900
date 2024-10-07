@@ -19,6 +19,10 @@ Future<void> signinWithPhoneNumber(String number) async {
 
 }
 
+
+/*
+  Likely need to include these functions directly in the widget themselves in order to correctly handle the applications authentication state.
+*/
 Future<void> signupWithEmailAndPassword(String email, String password) async {
   try {
     await FirebaseAuth.instance.createUserWithEmailAndPassword(
