@@ -1,6 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 
+bool validatePhoneNumber(String number) {
+
+  return true;
+}
+
+bool validateEmailAndPassword(String email, String password) {
+
+  return true;
+}
+
 Future<void> signupWithPhoneNumber(String number) async {
 
 }
