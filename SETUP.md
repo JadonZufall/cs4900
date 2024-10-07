@@ -5,6 +5,7 @@
 
 ## MacOS
 For my env I am using ZSH and Homebrew as my package manager.
+I am using android studio for build process as well as build in android emulator.
 
 
 
@@ -102,3 +103,46 @@ Restart android studio
 
 Add firebase authentication
 `flutter pub add firebase_auth`
+
+### Android Emulation
+Click on Device Manager on the left side of Android Studio and create and run an android device
+
+
+### IOS Emulation
+if you are on a macbook turn on power saving otherwise your macbook will cook itself.
+both of these will take forever to install because ruby is terrible.
+
+You only are required to run these if you are getting warning messages attempting to run this
+on your computer.
+
+This requires you install an XCode emulator for IOS too because I already had one installed,
+you are gonna have to figure that out on your own.
+
+required for cocoapods.  These are painful.
+
+`sudo gem install drb -v 2.0.6`
+
+`sudo gem install activesupport -v 6.1.7.8`
+
+
+required for iphone emulation.
+
+`sudo gem install cocoapods`
+
+
+If it fails to run because the plugin firebase_auth requires a higher minimum iOS deployment
+version then go to 
+`ios/Flutter/AppFrameworkInfo.plist`
+then change the value MinimumOSVersion to 13.0
+
+Another thing to try is
+`pod repo update`
+
+If this does not work complete the following steps
+1. Login to XCode with your apple ID.
+2. ?
+3. ?
+4. ?
+5. Cry yourself to sleep in apples terrible build enviorment.
+6. Give up and emulate android
+
