@@ -36,6 +36,12 @@ class SignUpScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Switch(
+              value: true,
+              activeColor: Colors.blue,
+              onChanged: (bool value) {},
+            ),
+
             // Username field.
             TextField(
                 controller: _usernameController,
