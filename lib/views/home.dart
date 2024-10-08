@@ -1,19 +1,30 @@
 import 'dart:developer';
-import 'package:cs4900/auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import "package:cs4900/views/signin.dart";
+import 'package:cs4900/main.dart';
+import 'package:cs4900/auth.dart';
+import 'package:cs4900/views/signin.dart';
+
 
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   void _signout(BuildContext context) {
-    log("_signout button pressed.");
+    log("Sign out button has been pressed.");
     signoutOfAccountInstance();
-    log("_signout completed");
-    Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()));
+    log("Sign out completed.");
+
+    log("Redirecting to sign in page.");
+    // Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()));
+    navigatorKey.currentState?.pushNamed("/signin");
+    return;
+  }
+
+  void _test() {
+
   }
 
   @override
@@ -21,9 +32,7 @@ class HomeScreen extends StatelessWidget {
     const Text title = Text("Home");
 
     // Check if the user is logged in.
-
     FirebaseAuth auth = FirebaseAuth.instance;
-
     String username;
     if (auth.currentUser?.displayName == null) {
       username = "null";
@@ -33,9 +42,12 @@ class HomeScreen extends StatelessWidget {
     }
 
     if (auth.currentUser == null) {
-      // Redirect the user to the signin page.
-      log("User is not authenticated, redirecting user to signin page");
+      // Redirect the user to the sign in page.
+      log("User is not authenticated, redirecting user to sign in page");
       return SignInScreen().build(context);
+    }
+    else {
+      log("User is authenticated, loading home page.");
     }
 
     AppBar appBar = AppBar(

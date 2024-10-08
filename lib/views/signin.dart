@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
-
+import 'package:cs4900/main.dart';
 import 'package:cs4900/auth.dart';
 import 'package:cs4900/views/signup.dart';
 import 'package:cs4900/views/home.dart';
+
 
 /*
   Displays error text if the login is invalid.
@@ -21,33 +22,25 @@ class SignInScreen extends StatelessWidget {
 
   SignInScreen({super.key});
 
-  void _signin(BuildContext context) {
+  void _signin() {
     log("Signin button pressed");
+
+
+    // Add listener for auth status changed.
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
-        log('User is currently signed out!');
+        log("Invalid password");
+        _passwordController.clear();
+
       }
       else {
-        log('User is signed in!');
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        log("Redirecting user to home page.");
+        _usernameController.clear();
+        _passwordController.clear();
+        navigatorKey.currentState?.pushNamed("/home");
       }
     });
     signinWithEmailAndPassword(_usernameController.text.trim(), _passwordController.text.trim());
-
-    FirebaseAuth auth = FirebaseAuth.instance;
-    String username;
-    if (auth.currentUser != null) {
-      log("Logged in as...");
-      log(auth.currentUser!.displayName ?? "null");
-    }
-    else {
-      log("Failed to log in");
-    }
-    // TODO routing.
-  }
-
-  void _signup() {
-
   }
 
   @override
@@ -98,7 +91,7 @@ class SignInScreen extends StatelessWidget {
             ),
 
             // Sign In button.
-            ElevatedButton(onPressed: () {_signin(context);}, child: const Text("Sign In")),
+            ElevatedButton(onPressed: _signin, child: const Text("Sign In")),
 
 
 
