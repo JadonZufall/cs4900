@@ -69,7 +69,38 @@ class HomeScreen extends StatelessWidget {
       ),
     );
 
-
-    return Scaffold(appBar: appBar, body: body);
+    BottomAppBar navbar = BottomAppBar(
+      child: Row(
+        children: [
+          IconButton(
+              icon: const Icon(Icons.home, size: 30),
+              onPressed: () {}
+          ),
+          const Spacer(flex: 1),
+          IconButton(
+              icon: const Icon(Icons.search, size: 30),
+              onPressed: () {}
+          ),
+          const Spacer(flex: 4),
+          IconButton(
+              icon: const Icon(Icons.notifications, size: 30),
+              onPressed: () {}
+          ),
+          const Spacer(flex: 1),
+          IconButton(
+              icon: const Icon(Icons.person, size: 30),
+              onPressed: () {}
+          ),
+        ],
+      ),
+    );
+    return Scaffold(
+      appBar: appBar,
+      body: body,
+      bottomNavigationBar: navbar,
+      floatingActionButton:
+        FloatingActionButton(child: const Icon(Icons.add), onPressed: () {}),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
   }
 }
