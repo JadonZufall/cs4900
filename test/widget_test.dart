@@ -11,5 +11,5 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cs4900/main.dart';
 
 void main() {
-  
+
 }
