@@ -28,6 +28,7 @@ class SignInScreen extends StatelessWidget {
 
     // Add listener for auth status changed.
     // TODO We have a problem of this creating infinite listeners.
+    
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         log("Invalid password");

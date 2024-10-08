@@ -2,6 +2,9 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
+
+
+
 bool validatePhoneNumber(String number) {
 
   return true;

@@ -48,11 +48,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     MaterialApp app = new MaterialApp(
       title: "Instagram Clone",
-      initialRoute: "homeScreen",
+      initialRoute: "/home",
       theme: ThemeData(
         scaffoldBackgroundColor: const Color.fromARGB(255, 18, 25, 33),
       ),
-      home: HomeScreen(),
       navigatorKey: navigatorKey,
       onGenerateRoute: Router.generateRoute,
     );
