@@ -59,28 +59,31 @@ class SignInScreen extends StatelessWidget {
 
             // Username field.
             TextField(
+              autocorrect: false,
               controller: _usernameController,
+
               decoration: InputDecoration(
                 labelText: "Email",
                 labelStyle: const TextStyle(color:  Color.fromRGBO(148, 173, 199, 1)),
                 filled: true,
-                fillColor: const Color.fromRGBO(36, 54, 71, 1),
+                fillColor: const Color.fromRGBO(255, 255, 255, 1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                   borderSide: BorderSide.none,
                 ),
               )
             ),
-
+            const SizedBox(height: 10.0),
 
             // Password Field
             TextField(
+              autocorrect: false,
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: "Password",
                 labelStyle: const TextStyle(color:  Color.fromRGBO(148, 173, 199, 1)),
                 filled: true,
-                fillColor: const Color.fromRGBO(36, 54, 71, 1),
+                fillColor: const Color.fromRGBO(255, 255, 255, 1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                   borderSide: BorderSide.none,
@@ -89,10 +92,12 @@ class SignInScreen extends StatelessWidget {
               obscureText: true,
             ),
 
+            const SizedBox(height: 10.0),
+
             // Sign In button.
             ElevatedButton(onPressed: _signin, child: const Text("Sign In")),
 
-
+            const SizedBox(height: 10.0),
 
             Material(
               color: Colors.transparent,

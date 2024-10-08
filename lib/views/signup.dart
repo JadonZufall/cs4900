@@ -43,7 +43,7 @@ class SignUpScreen extends StatelessWidget {
                   labelText: "Email",
                   labelStyle: const TextStyle(color:  Color.fromRGBO(148, 173, 199, 1)),
                   filled: true,
-                  fillColor: const Color.fromRGBO(36, 54, 71, 1),
+                  fillColor: const Color.fromRGBO(255, 255, 255, 1),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide: BorderSide.none,
@@ -51,6 +51,7 @@ class SignUpScreen extends StatelessWidget {
                 )
             ),
 
+            const SizedBox(height: 10.0),
 
             // Password Field
             TextField(
@@ -59,7 +60,7 @@ class SignUpScreen extends StatelessWidget {
                 labelText: "Password",
                 labelStyle: const TextStyle(color:  Color.fromRGBO(148, 173, 199, 1)),
                 filled: true,
-                fillColor: const Color.fromRGBO(36, 54, 71, 1),
+                fillColor: const Color.fromRGBO(255, 255, 255, 1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                   borderSide: BorderSide.none,
@@ -67,6 +68,8 @@ class SignUpScreen extends StatelessWidget {
               ),
               obscureText: true,
             ),
+
+            const SizedBox(height: 10.0),
 
             ElevatedButton(onPressed: _signup, child: const Text("Sign Up")),
 
