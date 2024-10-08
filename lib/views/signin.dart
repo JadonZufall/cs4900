@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,32 +16,29 @@ import 'package:cs4900/views/home.dart';
   Redirects to the Users home page if the user logs in correctly.
 */
 
-
+// TODO make a stateful widget?
 class SignInScreen extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  static final StreamSubscription<User?> authListener = FirebaseAuth.instance.authStateChanges().listen(
+    (User? user) {
+      if (user == null) {
+        log("Invalid password (maybe invalid event)");
+      }
+      else {
+        log("Redirecting user to home page.");
+        navigatorKey.currentState?.pushNamed("/home");
+        SignInScreen.authListener.pause();
+      }
+      log("authListener paused");
+    }
+  );
   SignInScreen({super.key});
 
   void _signin() {
     log("Signin button pressed");
-
-
-    // Add listener for auth status changed.
-    // TODO We have a problem of this creating infinite listeners.
-    
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        log("Invalid password");
-        _passwordController.clear();
-      }
-      else {
-        log("Redirecting user to home page.");
-        _usernameController.clear();
-        _passwordController.clear();
-        navigatorKey.currentState?.pushNamed("/home");
-      }
-    });
+    SignInScreen.authListener.resume();
+    log("authListener resumed.");
     signinWithEmailAndPassword(_usernameController.text.trim(), _passwordController.text.trim());
   }
 
