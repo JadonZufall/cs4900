@@ -18,7 +18,7 @@ class SignUpScreen extends StatelessWidget {
     signupWithEmailAndPassword(_usernameController.text.trim(), _passwordController.text.trim());
     _usernameController.clear();
     _passwordController.clear();
-    navigatorKey.currentState?.pushNamed("/signin");
+    navigatorKey.currentState?.pushReplacementNamed("/signin");
   }
 
   @override

@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
 
     log("Redirecting to sign in page.");
     // Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()));
-    navigatorKey.currentState?.pushNamed("/signin");
+    navigatorKey.currentState?.pushReplacementNamed("/signin");
     return;
   }
 

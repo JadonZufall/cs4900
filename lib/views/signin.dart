@@ -27,7 +27,7 @@ class SignInScreen extends StatelessWidget {
       }
       else {
         log("Redirecting user to home page.");
-        navigatorKey.currentState?.pushNamed("/home");
+        navigatorKey.currentState?.pushReplacementNamed("/home");
         SignInScreen.authListener.pause();
       }
       log("authListener paused");

@@ -11,6 +11,7 @@ import 'package:cs4900/views/signup.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class RouteNames {
+  static const String defaultScreenRoute = "";
   static const String homeScreenRoute = "/home";
   static const String signinScreenRoute = "/signin";
   static const String signupScreenRoute = "/signup";
@@ -19,6 +20,8 @@ class RouteNames {
 class Router {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case RouteNames.defaultScreenRoute:
+        return MaterialPageRoute(builder: (_) => HomeScreen());
       case RouteNames.homeScreenRoute:
         return MaterialPageRoute(builder: (_) => HomeScreen());
       case RouteNames.signinScreenRoute:
@@ -48,7 +51,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     MaterialApp app = new MaterialApp(
       title: "Instagram Clone",
-      initialRoute: "/home",
+      initialRoute: "",
       theme: ThemeData(
         scaffoldBackgroundColor: const Color.fromARGB(255, 18, 25, 33),
       ),
