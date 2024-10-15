@@ -14,30 +14,49 @@ class MyProfileScreen extends StatefulWidget {
 }
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
-  String username = "";
-  String bio = "";
-
-  void postFrameCallback(_) {
-    log("Post frame callback");
-    Future<void> _asyncWrapper() async {
-      username = await getLocalUsername();
-    }
-    void validate(_) {
-      if (username == "") {
-        navigatorKey.currentState?.pushReplacementNamed(RouteNames.profileSetupScreenRoute);
-      }
-      else {
-        log("validated $username");
-
-      }
-    }
-    _asyncWrapper().then(validate);
-
-  }
+  String? username;
+  String? bio;
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback(postFrameCallback,);
+    // WidgetsBinding.instance.addPostFrameCallback(postFrameCallback,);
+
+
+    // Update username field if the username is the initial empty value.
+    if (username == null) {
+      getLocalUsername().then(
+        // Perform this after the username is fetched.
+          (String name) {
+            if (name == "") {
+              // Redirect the user to the setup profile page.
+              navigatorKey.currentState?.pushReplacementNamed(RouteNames.profileSetupScreenRoute);
+            }
+            else {
+              setState(() {
+                // Update the username field on the profile.
+                username = name;
+              });
+              log("Updated username to $username");
+            }
+          }
+      );
+    }
+
+    if (bio == null) {
+      getLocalUserInfo().then(
+          (Map<String, dynamic> userInfo) {
+
+          }
+      );
+    }
+
+    Text usernameField = Text(
+        username!, // will need to be replaced with actual username from firebase
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+      ));
 
     return Scaffold(
       appBar: AppBar(
@@ -63,17 +82,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        username, // will need to be replaced with actual username from firebase
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      usernameField,
+
                       const SizedBox(height: 4.0),
                       Text(
-                        bio, // Will need to be replaced with actual bio data from firebase
+                        "REPLACE THE STRING", // Will need to be replaced with actual bio data from firebase
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.white

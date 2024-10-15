@@ -8,7 +8,9 @@ class UserModel {
   /* Represents a single user instance.
   */
   static const String collectionName = "Users";
-  static const List<String> collectionFields = ["uid", "email", "username", "phone", "followers", "following"];
+  static const List<String> collectionFields = [
+    "uid", "email", "username", "phone", "followers", "following", "likes"
+  ];
 
   static Future<DocumentSnapshot<Object?>> get(String uid) async {
     /* Retrieves the document snapshot of a specific user from their user id.
@@ -52,7 +54,8 @@ class UserModel {
       "username": username,
       "phone": phone,
       "followers": [],
-      "following": []
+      "following": [],
+      "likes": [],
     };
     db.collection(UserModel.collectionName).doc(uid).set(user);
   }
