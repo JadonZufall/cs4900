@@ -4,10 +4,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:cs4900/database.dart';
 
+String? getLocalUserUID() {
+  User? localUser = FirebaseAuth.instance.currentUser;
+  return localUser?.uid;
+}
 
+Future<bool> isAuthenticated() async {
+  User? localUser = FirebaseAuth.instance.currentUser;
+  return localUser != null;
+}
 
 
 Future<Map<String, dynamic>> getLocalUserInfo() async {
+  /* Gets the local authenticated user.
+   */
   User? localUser = FirebaseAuth.instance.currentUser;
   DocumentSnapshot<Object?> snapshot = await UserModel.get(localUser!.uid);
   String username = snapshot.get("username");
