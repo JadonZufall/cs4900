@@ -22,6 +22,13 @@ class UserModel {
     throw Exception("Not Implemented Exception.");
   }
 
+  static Future<void> setUsername(String uid, String username) async {
+    CollectionReference ref = db.collection(collectionName);
+    await ref.doc(uid).update({"username": username});
+    log("Updated?");
+    return;
+  }
+
   static Future<bool> exists(String uid) async {
     DocumentSnapshot<Object?> user = await UserModel.get(uid);
     return user.exists;

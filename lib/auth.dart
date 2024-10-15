@@ -28,6 +28,12 @@ Future<String> getLocalUsername() async {
   return await user["username"];
 }
 
+Future<void> setLocalUsername(String username) async {
+  User? localUser = FirebaseAuth.instance.currentUser;
+  UserModel.setUsername(localUser!.uid, username);
+  return;
+}
+
 
 
 bool validatePhoneNumber(String number) {

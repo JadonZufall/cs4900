@@ -17,34 +17,27 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   String username = "";
   String bio = "";
 
-  Future<void> updateUserInformation() async {
-    username = "username";
-    bio = "User bio goes here";
-    username = await getLocalUsername();
-    await triggerProfileSetupCheck();
-    log("user information has been updated \"$username\"");
-  }
-
-  Future<void> triggerProfileSetupCheck() async {
-    await updateUserInformation();
-    if (username == "") {
-      log("Navigating to profileSetup");
-      navigatorKey.currentState?.pushReplacementNamed(RouteNames.profileSetupScreenRoute);
+  void postFrameCallback(_) {
+    log("Post frame callback");
+    Future<void> _asyncWrapper() async {
+      username = await getLocalUsername();
     }
-    else {
-      log("Profile is already setup");
-    }
-  }
+    void validate(_) {
+      if (username == "") {
+        navigatorKey.currentState?.pushReplacementNamed(RouteNames.profileSetupScreenRoute);
+      }
+      else {
+        log("validated $username");
 
-  @override
-  void initState() {
-    super.initState();
-    updateUserInformation();
+      }
+    }
+    _asyncWrapper().then(validate);
+
   }
 
   @override
   Widget build(BuildContext context) {
-
+    WidgetsBinding.instance.addPostFrameCallback(postFrameCallback,);
 
     return Scaffold(
       appBar: AppBar(
