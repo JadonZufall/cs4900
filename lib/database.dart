@@ -6,9 +6,15 @@ final FirebaseFirestore db = FirebaseFirestore.instance;
 
 class UserInstance {
   static const String collectionName = "Users";
+  static const List<String> collectionFields = [];
 
   String uid;
   UserInstance(this.uid);
+
+  static UserInstance? getLocalUser() {
+    if (FirebaseAuth.instance.currentUser == null) { return null; }
+    return UserInstance(FirebaseAuth.instance.currentUser!.uid);
+  }
 
   CollectionReference _getCollection() {
     return db.collection(collectionName);
@@ -23,28 +29,20 @@ class UserInstance {
     return reference.doc(uid).get();
   }
 
-  Future<void> validate() async {
-
-  }
-
-  Future<dynamic> get username async {
+  Future<Map<String, dynamic>> get() async {
     DocumentSnapshot<Object?> snapshot = await _getSnapshot();
-    return snapshot.get("username");
+    Map<String, dynamic> result = {};
+    for (var i = 0; i < collectionFields.length; i++) {
+      String fieldName = collectionFields[i];
+      dynamic value = snapshot.get(fieldName);
+      result[fieldName] = value;
+    }
+    return result;
   }
 
-  set username(dynamic value) {
+  Future<void> set(Map<String, dynamic> data) async {
     DocumentReference<Object?> documentReference = _getDocument();
-    documentReference.update({"username": value});
-  }
-
-  Future<dynamic> get bio async {
-    DocumentSnapshot<Object?> snapshot = await _getSnapshot();
-    return snapshot.get("bio");
-  }
-
-  set bio(dynamic value) {
-    DocumentReference<Object?> documentReference = _getDocument();
-    documentReference.update({"bio": value});
+    await documentReference.update(data);
   }
 }
 
