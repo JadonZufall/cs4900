@@ -50,8 +50,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       );
     }
 
+    String? tempUserName = username;
+    tempUserName ??= "";
+
     Text usernameField = Text(
-        username!, // will need to be replaced with actual username from firebase
+        tempUserName, // will need to be replaced with actual username from firebase
         style: const TextStyle(
           color: Colors.white,
           fontSize: 24,
