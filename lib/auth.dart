@@ -6,21 +6,24 @@ import 'package:cs4900/database.dart';
 
 
 bool validatePhoneNumber(String number) {
+  /* User input sanitation.
+  */
 
   return true;
 }
 
 bool validateEmailAndPassword(String email, String password) {
-
+  /* User input sanitation.
+  */
   return true;
 }
 
 Future<void> signupWithPhoneNumber(String number) async {
-
+  throw Exception("Not implemented!");
 }
 
 Future<void> signinWithPhoneNumber(String number) async {
-
+  throw Exception("Not implemented");
 }
 
 
@@ -33,9 +36,12 @@ Future<void> signupWithEmailAndPassword(String email, String password) async {
       email: email,
       password: password,
     );
+
     UserModel.create(cred.user!.uid, email, "", "");
+
     String uid = cred.user!.uid;
     log("Authentication account created, $uid");
+
     return;
 
   } on FirebaseAuthException catch (e) {
@@ -86,7 +92,7 @@ Future<int> signinWithEmailAndPassword(String email, String password) async {
 
 Future<void> signoutOfAccountInstance() async {
   await FirebaseAuth.instance.signOut();
-  log("Account signed out!");
+  log("Authentication was deauthenticated.");
   return;
 }
 

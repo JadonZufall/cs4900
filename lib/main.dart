@@ -8,6 +8,11 @@ import 'package:cs4900/auth.dart';
 import 'package:cs4900/views/home.dart';
 import 'package:cs4900/views/signin.dart';
 import 'package:cs4900/views/signup.dart';
+import 'package:cs4900/views/feed.dart';
+import 'package:cs4900/views/post.dart';
+import 'package:cs4900/views/my_profile.dart';
+import 'package:cs4900/views/profile_setup.dart';
+import 'package:cs4900/views/profile.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class RouteNames {
@@ -15,6 +20,9 @@ class RouteNames {
   static const String homeScreenRoute = "/home";
   static const String signinScreenRoute = "/signin";
   static const String signupScreenRoute = "/signup";
+  static const String profileScreenRoute = "/profile";
+  static const String myProfileScreenRoute = "/my_profile";
+  static const String feedScreenRoute = "/feed";
 }
 
 class Router {
@@ -28,6 +36,12 @@ class Router {
         return MaterialPageRoute(builder: (_) => SignInScreen());
       case RouteNames.signupScreenRoute:
         return MaterialPageRoute(builder: (_) => SignUpScreen());
+      case RouteNames.profileScreenRoute:
+        return MaterialPageRoute(builder: (_) => ProfileScreen());
+      case RouteNames.myProfileScreenRoute:
+        return MaterialPageRoute(builder: (_) => MyProfileScreen());
+      case RouteNames.feedScreenRoute:
+        return MaterialPageRoute(builder: (_) => FeedScreen());
       default:
         return MaterialPageRoute(builder: (_) => Scaffold(
           body: Center(child: Text("No route defined for ${settings.name}"))
