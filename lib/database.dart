@@ -14,12 +14,14 @@ class ModelField {
 class UserInstance {
   static const String collectionName = "Users";
   static List<ModelField> collectionFields = [
-    ModelField("email"),
-    ModelField("followers"),
-    ModelField("following"),
-    ModelField("phone"),
     ModelField("uid"),
     ModelField("username"),
+    ModelField("email"),
+    ModelField("phone"),
+    ModelField("bio"),
+    ModelField("likes"),
+    ModelField("followers"),
+    ModelField("following"),
   ];
 
   String uid;
