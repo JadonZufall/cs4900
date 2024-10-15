@@ -19,6 +19,22 @@ class HomeScreen extends StatelessWidget {
     return;
   }
 
+  void _homeButton() {
+    navigatorKey.currentState?.pushNamed(RouteNames.feedScreenRoute);
+  }
+
+  void _searchButton() {
+    log("Unimplemented view");
+  }
+
+  void _notificationsButton() {
+    navigatorKey.currentState?.pushNamed(RouteNames.homeScreenRoute);
+  }
+
+  void _profileButton() {
+    navigatorKey.currentState?.pushNamed(RouteNames.myProfileScreenRoute);
+  }
+
   @override
   Widget build(BuildContext context) {
     const Text title = Text("Home");
@@ -81,11 +97,12 @@ class HomeScreen extends StatelessWidget {
           const Spacer(flex: 1),
           IconButton(
               icon: const Icon(Icons.person, size: 30),
-              onPressed: () {}
+              onPressed: _profileButton,
           ),
         ],
       ),
     );
+
     return Scaffold(
       appBar: appBar,
       body: body,

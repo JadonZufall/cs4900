@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class FeedPage extends StatelessWidget {
-  FeedPage({super.key});
+class FeedScreen extends StatelessWidget {
+  FeedScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
