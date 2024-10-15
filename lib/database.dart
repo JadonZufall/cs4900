@@ -8,11 +8,18 @@ class UserModel {
   /* Represents a single user instance.
   */
   static const String collectionName = "Users";
+  static const List<String> collectionFields = ["uid", "email", "username", "phone", "followers", "following"];
 
   static Future<DocumentSnapshot<Object?>> get(String uid) async {
+    /* Retrieves the document snapshot of a specific user from their user id.
+    */
     CollectionReference ref = db.collection(collectionName);
     DocumentSnapshot<Object?> res = await ref.doc(uid).get();
     return res;
+  }
+
+  static Future<void> set(String uid) async {
+    throw Exception("Not Implemented Exception.");
   }
 
   static Future<bool> exists(String uid) async {
@@ -47,58 +54,64 @@ class UserModel {
     final ref = db.doc("users/$uid");
     ref.delete();
   }
-
-  static void purge(String uid) {
-    // Removes all content relating to the user.
-  }
 }
 
 class PostModel {
   /* Represents a single upload.
    */
-  static void create(String id) {
+  static Future<DocumentSnapshot<Object?>> get(String uid) async {
+    throw Exception("Not Implemented Exception.");
+  }
 
+  static Future<bool> exists(String uid) async {
+    throw Exception("Not Implemented Exception.");
+  }
+
+  static void create(String id) {
+    throw Exception("Not Implemented Exception.");
   }
 
   static void delete(String id) {
-
+    throw Exception("Not Implemented Exception.");
   }
-
-  static void purge(String id) {
-
-  }
-
 }
 
 class CommentModel {
   /* Represents a comment on a post.
    */
-  static void create(String id) {
+  static Future<DocumentSnapshot<Object?>> get(String uid) async {
+    throw Exception("Not Implemented Exception.");
+  }
 
+  static Future<bool> exists(String uid) async {
+    throw Exception("Not Implemented Exception.");
+  }
+
+  static void create(String id) {
+    throw Exception("Not Implemented Exception.");
   }
 
   static void delete(String id) {
-
-  }
-
-  static void purge(String id) {
-
+    throw Exception("Not Implemented Exception.");
   }
 }
 
 class ConversationModel {
   /* Represents a conversation between two users.
    */
+  static Future<DocumentSnapshot<Object?>> get(String uid) async {
+    throw Exception("Not Implemented Exception.");
+  }
+
+  static Future<bool> exists(String uid) async {
+    throw Exception("Not Implemented Exception.");
+  }
 
   static void create(String id) {
-
+    throw Exception("Not Implemented Exception.");
   }
 
   static void delete(String id) {
-
-  }
-
-  static void purge(String id) {
-
+    throw Exception("Not Implemented Exception.");
   }
 }
