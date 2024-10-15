@@ -9,6 +9,10 @@ class ModelField {
   // TODO Support default values.
 
   ModelField(this.key);
+
+  dynamic getDefault() {
+    return "defaulted";
+  }
 }
 
 class UserInstance {
@@ -59,7 +63,19 @@ class UserInstance {
 
   Future<void> set(Map<String, dynamic> data) async {
     DocumentReference<Object?> documentReference = _getDocument();
-    await documentReference.update(data);
+    return documentReference.update(data);
+  }
+
+  Future<void> validate() async {
+    Map<String, dynamic> defaultAssignments = {};
+    Map<String, dynamic> data = await get();
+    for (var i = 0; i < collectionFields.length; i++) {
+      String fieldName = collectionFields[i].key;
+      if (!data.containsKey(fieldName) || data[fieldName] == null) {
+        defaultAssignments[fieldName] = collectionFields[i].getDefault();
+      }
+    }
+    return set(defaultAssignments);
   }
 }
 
