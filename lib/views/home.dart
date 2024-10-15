@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _notificationsButton() {
-    navigatorKey.currentState?.pushNamed(RouteNames.homeScreenRoute);
+    log("Unimplemented view");
   }
 
   void _profileButton() {
@@ -82,17 +82,17 @@ class HomeScreen extends StatelessWidget {
         children: [
           IconButton(
               icon: const Icon(Icons.home, size: 30),
-              onPressed: () {}
+              onPressed: _homeButton,
           ),
           const Spacer(flex: 1),
           IconButton(
               icon: const Icon(Icons.search, size: 30),
-              onPressed: () {}
+              onPressed: _searchButton,
           ),
           const Spacer(flex: 4),
           IconButton(
               icon: const Icon(Icons.notifications, size: 30),
-              onPressed: () {}
+              onPressed: _notificationsButton,
           ),
           const Spacer(flex: 1),
           IconButton(

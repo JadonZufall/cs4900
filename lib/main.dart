@@ -23,6 +23,7 @@ class RouteNames {
   static const String profileScreenRoute = "/profile";
   static const String myProfileScreenRoute = "/my_profile";
   static const String feedScreenRoute = "/feed";
+  static const String profileSetupScreenRoute = "/profile_setup";
 }
 
 class Router {
@@ -40,6 +41,8 @@ class Router {
         return MaterialPageRoute(builder: (_) => ProfileScreen());
       case RouteNames.myProfileScreenRoute:
         return MaterialPageRoute(builder: (_) => MyProfileScreen());
+      case RouteNames.profileSetupScreenRoute:
+        return MaterialPageRoute(builder: (_) => ProfileSetupScreen());
       case RouteNames.feedScreenRoute:
         return MaterialPageRoute(builder: (_) => FeedScreen());
       default:

@@ -1,9 +1,51 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
+import 'dart:async';
 
-class MyProfileScreen extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:cs4900/main.dart';
+import 'package:cs4900/auth.dart';
+
+class MyProfileScreen extends StatefulWidget {
+
   MyProfileScreen({super.key});
+
+  @override
+  State<MyProfileScreen> createState() => _MyProfileScreenState();
+}
+
+class _MyProfileScreenState extends State<MyProfileScreen> {
+  String username = "";
+  String bio = "";
+
+  Future<void> updateUserInformation() async {
+    username = "username";
+    bio = "User bio goes here";
+    username = await getLocalUsername();
+    await triggerProfileSetupCheck();
+    log("user information has been updated \"$username\"");
+  }
+
+  Future<void> triggerProfileSetupCheck() async {
+    await updateUserInformation();
+    if (username == "") {
+      log("Navigating to profileSetup");
+      navigatorKey.currentState?.pushReplacementNamed(RouteNames.profileSetupScreenRoute);
+    }
+    else {
+      log("Profile is already setup");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateUserInformation();
+  }
+
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -28,18 +70,18 @@ class MyProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Username', // will need to be replaced with actual username from firebase
-                        style: TextStyle(
+                      Text(
+                        username, // will need to be replaced with actual username from firebase
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4.0),
-                      const Text(
-                        'User bio here.', // Will need to be replaced with actual bio data from firebase
-                        style: TextStyle(
+                      Text(
+                        bio, // Will need to be replaced with actual bio data from firebase
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Colors.white
                           ),
