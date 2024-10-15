@@ -34,23 +34,25 @@ Future<void> signupWithEmailAndPassword(String email, String password) async {
       password: password,
     );
     UserModel.create(cred.user!.uid, email, "", "");
-
-    log("Account created!");
+    String uid = cred.user!.uid;
+    log("Authentication account created, $uid");
     return;
 
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
-      log("Weak password!");
+      log("Authentication account creation failed, password is too weak.");
+      return;
     }
     else if (e.code == 'email-already-in-use') {
-      log("Email already in use!");
+      log("Authentication account creation failed, email is already in use.");
     }
     else {
-      log("Unknown firebase auth error");
+      String errorCode = e.code;
+      log("Authentication account creation failed, $errorCode");
     }
   }
   catch (e) {
-    log("Signup failed, unexpected exception was invoked");
+    log("Authentication account creation failed, unexpected exception.");
   }
 }
 
