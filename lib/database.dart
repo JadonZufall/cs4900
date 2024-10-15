@@ -4,9 +4,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 final FirebaseFirestore db = FirebaseFirestore.instance;
 
+class ModelField {
+  String key;
+  // TODO Support default values.
+
+  ModelField(this.key);
+}
+
 class UserInstance {
   static const String collectionName = "Users";
-  static const List<String> collectionFields = [];
+  static List<ModelField> collectionFields = [
+    ModelField("email"),
+    ModelField("followers"),
+    ModelField("following"),
+    ModelField("phone"),
+    ModelField("uid"),
+    ModelField("username"),
+  ];
 
   String uid;
   UserInstance(this.uid);
@@ -33,8 +47,9 @@ class UserInstance {
     DocumentSnapshot<Object?> snapshot = await _getSnapshot();
     Map<String, dynamic> result = {};
     for (var i = 0; i < collectionFields.length; i++) {
-      String fieldName = collectionFields[i];
+      String fieldName = collectionFields[i].key;
       dynamic value = snapshot.get(fieldName);
+      // TODO add default values from ModelFields.
       result[fieldName] = value;
     }
     return result;
