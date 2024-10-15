@@ -51,7 +51,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     }
 
     String? tempUserName = username;
-    tempUserName ??= "username";
+    tempUserName ??= "";
 
     Text usernameField = Text(
         tempUserName, // will need to be replaced with actual username from firebase
