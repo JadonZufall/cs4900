@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:cs4900/database.dart';
 
 
 
@@ -29,10 +29,12 @@ Future<void> signinWithPhoneNumber(String number) async {
 */
 Future<void> signupWithEmailAndPassword(String email, String password) async {
   try {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+    UserCredential cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
+    UserModel.create(cred.user!.uid, email, "", "");
+
     log("Account created!");
     return;
 
@@ -48,29 +50,35 @@ Future<void> signupWithEmailAndPassword(String email, String password) async {
     }
   }
   catch (e) {
-    log("Something went wrong!");
+    log("Signup failed, unexpected exception was invoked");
   }
 }
 
 
-Future<void> signinWithEmailAndPassword(String email, String password) async {
+Future<int> signinWithEmailAndPassword(String email, String password) async {
   try {
-    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+    UserCredential cred = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-
-    log("User was logged in");
-
+    String uid = cred.user!.uid;
+    UserModel.validate(uid, email: email);
+    log("Authenticated as $uid");
+    return 0;
   }
   on FirebaseAuthException catch (e) {
     if (e.code == 'user-not-found') {
-      log('No user found.');
+      log('Authentication failed, user was not found.');
+      return 1;
     }
     else if (e.code == 'wrong-password') {
-      log('Invalid password.');
+      log('Authentication failed, invalid password.');
+      return 2;
     }
-
+    else {
+      log("Authentication failed, unexpected exception.");
+      return -1;
+    }
   }
 }
 

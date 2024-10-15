@@ -13,18 +13,10 @@ class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   void _signout(BuildContext context) {
-    log("Sign out button has been pressed.");
+    log("Signout event triggered.");
     signoutOfAccountInstance();
-    log("Sign out completed.");
-
-    log("Redirecting to sign in page.");
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()));
     navigatorKey.currentState?.pushReplacementNamed("/signin");
     return;
-  }
-
-  void _test() {
-
   }
 
   @override
