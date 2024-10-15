@@ -15,39 +15,17 @@ class ModelField {
   }
 }
 
-class UserInstance {
-  static const String collectionName = "Users";
-  static List<ModelField> collectionFields = [
-    ModelField("uid"),
-    ModelField("username"),
-    ModelField("email"),
-    ModelField("phone"),
-    ModelField("bio"),
-    ModelField("likes"),
-    ModelField("followers"),
-    ModelField("following"),
-  ];
-
-  String uid;
-  UserInstance(this.uid);
-
-  static UserInstance? getLocalUser() {
-    if (FirebaseAuth.instance.currentUser == null) { return null; }
-    return UserInstance(FirebaseAuth.instance.currentUser!.uid);
-  }
+abstract class ModelInterface {
+  static const String collectionName = "";
+  static List<ModelField> collectionFields = [];
 
   CollectionReference _getCollection() {
     return db.collection(collectionName);
   }
 
-  DocumentReference _getDocument() {
-    return _getCollection().doc(uid);
-  }
+  DocumentReference _getDocument();
+  Future<DocumentSnapshot<Object?>> _getSnapshot();
 
-  Future<DocumentSnapshot<Object?>> _getSnapshot() async {
-    CollectionReference reference = db.collection(UserInstance.collectionName);
-    return reference.doc(uid).get();
-  }
 
   Future<Map<String, dynamic>> get() async {
     DocumentSnapshot<Object?> snapshot = await _getSnapshot();
@@ -76,9 +54,73 @@ class UserInstance {
       }
     }
     return set(defaultAssignments);
+    }
+}
+
+class UserInstance extends ModelInterface {
+  static const String collectionName = "Users";
+  static List<ModelField> collectionFields = [
+    ModelField("uid"),
+    ModelField("username"),
+    ModelField("email"),
+    ModelField("phone"),
+    ModelField("bio"),
+    ModelField("likes"),
+    ModelField("followers"),
+    ModelField("following"),
+  ];
+
+  String uid;
+  UserInstance(this.uid);
+
+  static UserInstance? getLocalUser() {
+    if (FirebaseAuth.instance.currentUser == null) { return null; }
+    return UserInstance(FirebaseAuth.instance.currentUser!.uid);
+  }
+
+  @override
+  DocumentReference _getDocument() {
+    return _getCollection().doc(uid);
+  }
+
+  @override
+  Future<DocumentSnapshot<Object?>> _getSnapshot() async {
+    CollectionReference reference = db.collection(UserInstance.collectionName);
+    return reference.doc(uid).get();
   }
 }
 
+class PostInterface extends ModelInterface {
+  static const String collectionName = "posts";
+  static List<ModelField> collectionFields = [
+    ModelField("pid"),
+    ModelField("author"),
+    ModelField("comments"),
+    ModelField("likes"),
+    ModelField("image"),
+  ];
+
+  String pid;
+  PostInterface(this.pid);
+
+  @override
+  DocumentReference _getDocument() {
+    return _getCollection().doc(pid);
+  }
+
+  @override
+  Future<DocumentSnapshot<Object?>> _getSnapshot() async {
+    CollectionReference reference = db.collection(UserInstance.collectionName);
+    return reference.doc(pid).get();
+  }
+}
+
+
+
+
+/*
+ DEPRECIATED!!!!! VVVV
+ */
 class UserModel {
   /* Represents a single user instance.
   */
