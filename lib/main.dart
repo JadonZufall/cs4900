@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,9 +13,11 @@ import 'package:cs4900/views/signin.dart';
 import 'package:cs4900/views/signup.dart';
 import 'package:cs4900/views/feed.dart';
 import 'package:cs4900/views/post.dart';
-import 'package:cs4900/views/my_profile.dart';
+//import 'package:cs4900/views/my_profile.dart';
+import 'package:cs4900/views/profile/my_profile.dart';
 import 'package:cs4900/views/profile_setup.dart';
 import 'package:cs4900/views/profile.dart';
+import 'package:cs4900/views/camera/photo.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class RouteNames {
@@ -24,6 +29,7 @@ class RouteNames {
   static const String myProfileScreenRoute = "/my_profile";
   static const String feedScreenRoute = "/feed";
   static const String profileSetupScreenRoute = "/profile_setup";
+  static const String uploadScreenRoute = "/upload";
 }
 
 class Router {
@@ -40,11 +46,21 @@ class Router {
       case RouteNames.profileScreenRoute:
         return MaterialPageRoute(builder: (_) => ProfileScreen());
       case RouteNames.myProfileScreenRoute:
-        return MaterialPageRoute(builder: (_) => MyProfileScreen());
+        return MaterialPageRoute(builder: (_) {
+          return MyProfileScreen();
+        });
       case RouteNames.profileSetupScreenRoute:
         return MaterialPageRoute(builder: (_) => ProfileSetupScreen());
       case RouteNames.feedScreenRoute:
         return MaterialPageRoute(builder: (_) => FeedScreen());
+      case RouteNames.uploadScreenRoute:
+        return MaterialPageRoute(builder: (_) {
+          if (primaryCamera != null) {
+            return TakePictureScreen(camera: primaryCamera as CameraDescription);
+          }
+          log("Unable to find primary camera!");
+          return HomeScreen();
+        });
       default:
         return MaterialPageRoute(builder: (_) => Scaffold(
           body: Center(child: Text("No route defined for ${settings.name}"))
@@ -53,8 +69,13 @@ class Router {
   }
 }
 
+CameraDescription? primaryCamera;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final List<CameraDescription> cameras = await availableCameras();
+  log("found ${cameras.length} cameras");
+  primaryCamera = cameras.first;
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   runApp(MyApp());
 }

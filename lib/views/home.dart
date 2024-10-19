@@ -35,6 +35,10 @@ class HomeScreen extends StatelessWidget {
     navigatorKey.currentState?.pushNamed(RouteNames.myProfileScreenRoute);
   }
 
+  void _uploadButton() {
+    navigatorKey.currentState?.pushNamed(RouteNames.uploadScreenRoute);
+  }
+
   @override
   Widget build(BuildContext context) {
     const Text title = Text("Home");
@@ -72,7 +76,9 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         children: [
           // All requires elements in the body should be contained here.
-          ElevatedButton(onPressed: () {_signout(context);}, child: const Text("Sign Out")),
+          ElevatedButton(
+              onPressed: () {_signout(context);}, child: const Text("Sign Out")
+          ),
         ],
       ),
     );
@@ -108,7 +114,7 @@ class HomeScreen extends StatelessWidget {
       body: body,
       bottomNavigationBar: navbar,
       floatingActionButton:
-        FloatingActionButton(child: const Icon(Icons.add), onPressed: () {}),
+        FloatingActionButton(child: const Icon(Icons.add), onPressed: _uploadButton),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
