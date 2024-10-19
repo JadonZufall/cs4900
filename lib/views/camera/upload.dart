@@ -53,7 +53,9 @@ class UploadScreenState extends State<UploadScreen> {
         }
     );
     log("image uploaded");
-    navigatorKey.currentState?.pushReplacementNamed(RouteNames.homeScreenRoute);
+    navigatorKey.currentState?.pop();
+    navigatorKey.currentState?.pop();
+    navigatorKey.currentState?.pop();
     return imageURL;
   }
 

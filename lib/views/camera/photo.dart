@@ -37,6 +37,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // TOOD: Add gallary picker.  its called image picker I think, might need to download something for it.
+
     return Scaffold(
       appBar: AppBar(title: const Text("Camera")),
       body: FutureBuilder<void>(
