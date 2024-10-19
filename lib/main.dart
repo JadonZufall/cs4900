@@ -30,6 +30,7 @@ class RouteNames {
   static const String feedScreenRoute = "/feed";
   static const String profileSetupScreenRoute = "/profile_setup";
   static const String uploadScreenRoute = "/upload";
+  static const String myProfileSettingsRoute = "/profile_setup";
 }
 
 class Router {

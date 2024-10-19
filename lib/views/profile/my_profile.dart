@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:cs4900/main.dart';
+
 final FirebaseFirestore db = FirebaseFirestore.instance;
 
 
@@ -26,6 +28,17 @@ class UserInformation {
     snapshot ??= db.collection("Users").doc(uid).get();
     try {
       return await (await snapshot)!.get("bio") ?? "ERROR";
+    } on FirebaseException catch (e) {
+      if (e.code == "stroage/object-not-found") {
+        log("Defaulting users bio to default bio message");
+        await db.collection("Users").doc(uid).update({"bio": "Please fill out bio..."});
+        snapshot = db.collection("Users").doc(uid).get(); // Refresh the snapshot to the new version.
+        return "Please fill out bio...";
+      }
+      else {
+        log("${e.code}: ${e.message}");
+        return "ERROR";
+      }
     }
     catch (e) {
       return "ERROR_";
@@ -40,6 +53,7 @@ class UserInformation {
       if (e.code == "storage/object-not-found") {
         log("Defaulting users profile picture to default profile picture.");
         await db.collection("Users").doc(uid).update({"profile_picture": "https://shorturl.at/lj8F7"});
+        snapshot = db.collection("Users").doc(uid).get(); // Refresh the snapshot to the new version.
         return "https://shorturl.at/lj8F7";
       }
       else {
@@ -75,6 +89,10 @@ class MyProfileScreen extends StatefulWidget {
 class MyProfileScreenState extends State<MyProfileScreen> {
   late UserInformation userInformation = UserInformation(FirebaseAuth.instance.currentUser!.uid);
 
+
+  void _settingsButton() {
+    navigatorKey.currentState?.pushNamed(RouteNames.myProfileSettingsRoute);
+  }
 
   @override
   void initState() {
@@ -140,9 +158,7 @@ class MyProfileScreenState extends State<MyProfileScreen> {
           profilePictureField,
         ],
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () async {
-        log(await userInformation.getUsername());
-      }),
+      floatingActionButton: FloatingActionButton(onPressed: _settingsButton, child: const Icon(Icons.settings)),
     );
   }
 }

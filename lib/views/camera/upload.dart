@@ -1,25 +1,125 @@
 import 'dart:developer';
-import 'package:cs4900/main.dart';
+import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:cs4900/main.dart';
 
 
-
-class UploadScreen extends StatelessWidget {
+class UploadScreen extends StatefulWidget {
   final String imagePath;
+
   UploadScreen({super.key, required this.imagePath});
 
   @override
+  State<UploadScreen> createState() => UploadScreenState();
+}
+
+class UploadScreenState extends State<UploadScreen> {
+  double uploadPercentage = 0.0;
+  UploadTask? _uploadTask = null;
+  Timer? timer;
+
+  void _doneButton() {
+    navigatorKey.currentState?.pushNamed(RouteNames.homeScreenRoute);
+  }
+
+  Future<String> _upload() async {
+    log("Upload started");
+    String filename = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference storageReference = FirebaseStorage.instance.ref().child("Images/$filename");
+    File file = File(widget.imagePath);
+    UploadTask uploadTask = storageReference.putFile(file);
+    _uploadTask = uploadTask;
+    log("Bound uploadtask");
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() { log("Image upload completed."); });
+    String imageURL = await taskSnapshot.ref.getDownloadURL();
+    User? localUser = FirebaseAuth.instance.currentUser!;
+    await FirebaseFirestore.instance.collection("Images").add(
+        {
+          "url": imageURL,
+          "author": localUser.uid,
+        }
+    );
+    await FirebaseFirestore.instance.collection("Users").doc(localUser.uid).collection("images").add(
+        {
+          "url": imageURL,
+          "author": localUser.uid,
+        }
+    );
+    log("image uploaded");
+    navigatorKey.currentState?.pushReplacementNamed(RouteNames.homeScreenRoute);
+    return imageURL;
+  }
+
+  void updateProgress(Timer t) {
+    if (_uploadTask == null) {
+      log("No upload task?");
+      return;
+    }
+    int? bytesOut = _uploadTask!.snapshot.bytesTransferred;
+    int? bytesTotal = _uploadTask!.snapshot.totalBytes;
+
+
+    log("$bytesOut / $bytesTotal");
+    double? progress = (bytesOut!.toDouble()) / (bytesTotal!.toDouble());
+    uploadPercentage = progress ?? 0.0;
+    log("$uploadPercentage");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(const Duration(milliseconds: 500), updateProgress);
+  }
+
+  @override
+  void dispose() {
+    log("Killing upload task & timer");
+    timer?.cancel();
+    _uploadTask?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    log(widget.imagePath);
     AppBar appBar = AppBar(
       title: const Text("Upload"),
       centerTitle: true,
-      backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
+    );
+
+    FutureBuilder<String> uploadProgress = FutureBuilder<String>(
+      future: _upload(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return ElevatedButton(
+            onPressed: _doneButton,
+            child: Text("Done ${snapshot.data}"),
+          );
+        }
+        else {
+          int? bytesOut = _uploadTask?.snapshot.bytesTransferred;
+          int? bytesTotal = _uploadTask?.snapshot.totalBytes;
+          double? progress = (bytesOut!.toDouble()) / (bytesTotal!.toDouble());
+          uploadPercentage = progress ?? 0.0;
+          log("$uploadPercentage");
+          return Center(
+            child: CircularProgressIndicator(value: uploadPercentage,),
+          );
+        }
+      }
     );
 
     Column body = Column(
       children: [
-
+        Image.file(File(widget.imagePath)),
+        uploadProgress,
       ]
     );
 
