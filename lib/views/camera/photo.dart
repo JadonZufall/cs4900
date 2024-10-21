@@ -87,11 +87,14 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Camera")),
+      appBar: AppBar(title: const Text("Camera"),
+        backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
+        foregroundColor: Colors.white, ),
       body: Column(children: [
         Center(child: cameraBuilder),
+        
       ]),
-      bottomNavigationBar: bottomNavBar,
+      // bottomNavigationBar: bottomNavBar,
       floatingActionButton: actionButton,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
