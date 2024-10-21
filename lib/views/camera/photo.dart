@@ -22,6 +22,10 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
 
+  void _galleryButton() {
+
+  }
+
   @override
   void initState() {
     super.initState();
@@ -39,9 +43,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   Widget build(BuildContext context) {
     // TOOD: Add gallary picker.  its called image picker I think, might need to download something for it.
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Camera")),
-      body: FutureBuilder<void>(
+    FutureBuilder<void> cameraBuilder = FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -50,26 +52,48 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             return const Center(child: CircularProgressIndicator());
           }
         }
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          try {
-            await _initializeControllerFuture;
-            final image = await _controller.takePicture();
-            if (!context.mounted) return;
+    );
 
-            await Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => PreviewPictureScreen(
-                      imagePath: image.path
-                  ),
+    FloatingActionButton actionButton = FloatingActionButton(
+      child: const Icon(Icons.camera),
+      onPressed: () async {
+        try {
+          await _initializeControllerFuture;
+          final image = await _controller.takePicture();
+          if (!context.mounted) return;
+
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => PreviewPictureScreen(
+                  imagePath: image.path
               ),
-            );
-          } catch (e) {
-            print(e);
-          }
-        },
+            ),
+          );
+        } catch (e) {
+          print(e);
+        }
+      },
+    );
+
+    BottomAppBar bottomNavBar = BottomAppBar(
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.browse_gallery, size: 30),
+            onPressed: _galleryButton,
+          )
+        ]
       )
+    );
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("Camera")),
+      body: Column(children: [
+        Center(child: cameraBuilder),
+      ]),
+      bottomNavigationBar: bottomNavBar,
+      floatingActionButton: actionButton,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

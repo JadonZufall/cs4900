@@ -47,6 +47,10 @@ class PreviewPictureScreen extends StatelessWidget {
     // navigatorKey.currentState?.pushNamed(RouteNames.uploadScreenRoute);
   }
 
+  void _edit() {
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,13 +58,24 @@ class PreviewPictureScreen extends StatelessWidget {
       body: Column(
         children: [
           Image.file(File(imagePath)),
-          ElevatedButton(
-            onPressed: () async {
-              await Navigator.of(context).push(MaterialPageRoute(builder: (context) => UploadScreen(imagePath: imagePath),),);
-            },
-            child: const Text("Upload"),
+          Row(
+            children: [
+              Center(child: ElevatedButton(
+                onPressed: _retake,
+                child: const Text("Delete"),
+              )),
+              Center(child: ElevatedButton(
+                onPressed: () async {
+                  await Navigator.of(context).push(MaterialPageRoute(builder: (context) => UploadScreen(imagePath: imagePath),),);
+                },
+                child: const Text("Upload"),
+              )),
+              Center(child: ElevatedButton(
+                  onPressed: _edit,
+                  child: const Text("Edit")
+              ))
+            ]
           ),
-          ElevatedButton(onPressed: _retake, child: const Text("Delete")),
         ],
       ),
     );
