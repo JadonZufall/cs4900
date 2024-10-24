@@ -23,7 +23,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   late Future<void> _initializeControllerFuture;
 
   void _galleryButton() {
-
+    
   }
 
   @override
@@ -42,6 +42,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   @override
   Widget build(BuildContext context) {
     // TOOD: Add gallary picker.  its called image picker I think, might need to download something for it.
+    
 
     FutureBuilder<void> cameraBuilder = FutureBuilder<void>(
         future: _initializeControllerFuture,
@@ -97,6 +98,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       // bottomNavigationBar: bottomNavBar,
       floatingActionButton: actionButton,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      
     );
   }
 }

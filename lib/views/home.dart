@@ -36,7 +36,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _uploadButton() {
-    navigatorKey.currentState?.pushNamed(RouteNames.uploadScreenRoute);
+    navigatorKey.currentState?.pushNamed(RouteNames.uploadTypeScreenRoute);
   }
 
   @override

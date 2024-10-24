@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cs4900/views/upload_type.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
@@ -29,6 +30,7 @@ class RouteNames {
   static const String myProfileScreenRoute = "/my_profile";
   static const String feedScreenRoute = "/feed";
   static const String profileSetupScreenRoute = "/profile_setup";
+  static const String uploadTypeScreenRoute = "/upload_type";
   static const String uploadScreenRoute = "/upload";
   static const String myProfileSettingsRoute = "/profile_setup";
 }
@@ -62,6 +64,8 @@ class Router {
           log("Unable to find primary camera!");
           return HomeScreen();
         });
+      case RouteNames.uploadTypeScreenRoute:
+          return MaterialPageRoute(builder: (_) => UploadTypeScreen());
       default:
         return MaterialPageRoute(builder: (_) => Scaffold(
           body: Center(child: Text("No route defined for ${settings.name}"))
