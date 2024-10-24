@@ -7,8 +7,6 @@ import 'package:cs4900/main.dart';
 import 'package:cs4900/auth.dart';
 import 'package:cs4900/views/signin.dart';
 
-
-
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
@@ -48,8 +46,7 @@ class HomeScreen extends StatelessWidget {
     String username;
     if (auth.currentUser?.displayName == null) {
       username = "null";
-    }
-    else {
+    } else {
       username = auth.currentUser!.displayName!;
     }
 
@@ -57,8 +54,7 @@ class HomeScreen extends StatelessWidget {
       // Redirect the user to the sign in page.
       log("User is not authenticated, redirecting user to sign in page");
       return SignInScreen().build(context);
-    }
-    else {
+    } else {
       log("User is authenticated, loading home page.");
     }
 
@@ -73,37 +69,59 @@ class HomeScreen extends StatelessWidget {
 
     Padding body = Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          // All requires elements in the body should be contained here.
-          ElevatedButton(
-              onPressed: () {_signout(context);}, child: const Text("Sign Out")
-          ),
-        ],
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () => _signout(context),
+              child: Container(
+                width: 80, // Adjust width for size
+                height: 80, // Adjust height for size
+                decoration: const BoxDecoration(
+                  color:  Color.fromRGBO(32, 49, 68, 1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Text(
+                    "Sign Out",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
 
     BottomAppBar navbar = BottomAppBar(
+      color: Color.fromRGBO(32, 49, 68, 1),
       child: Row(
         children: [
           IconButton(
-              icon: const Icon(Icons.home, size: 30),
-              onPressed: _homeButton,
+            icon: const Icon(Icons.home, size: 30),
+            color: Colors.white,
+            onPressed: _homeButton,
           ),
           const Spacer(flex: 1),
           IconButton(
-              icon: const Icon(Icons.search, size: 30),
-              onPressed: _searchButton,
+            icon: const Icon(Icons.search, size: 30),
+            color: Colors.white,
+            onPressed: _searchButton,
           ),
           const Spacer(flex: 4),
           IconButton(
-              icon: const Icon(Icons.notifications, size: 30),
-              onPressed: _notificationsButton,
+            icon: const Icon(Icons.notifications, size: 30),
+            color: Colors.white,
+            onPressed: _notificationsButton,
           ),
           const Spacer(flex: 1),
           IconButton(
-              icon: const Icon(Icons.person, size: 30),
-              onPressed: _profileButton,
+            icon: const Icon(Icons.person, size: 30),
+            color: Colors.white,
+            onPressed: _profileButton,
           ),
         ],
       ),
@@ -113,8 +131,10 @@ class HomeScreen extends StatelessWidget {
       appBar: appBar,
       body: body,
       bottomNavigationBar: navbar,
-      floatingActionButton:
-        FloatingActionButton(child: const Icon(Icons.add), onPressed: _uploadButton),
+      floatingActionButton: FloatingActionButton(
+        foregroundColor: Colors.white,
+          backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
+          child: const Icon(Icons.add), onPressed: _uploadButton),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
