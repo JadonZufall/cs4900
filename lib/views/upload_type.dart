@@ -16,11 +16,14 @@ class UploadTypeScreen extends StatelessWidget {
       ),
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(children: [
-              Center(
-                child: ElevatedButton(
-                  onPressed: () async {
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Camera Button
+                GestureDetector(
+                  onTap: () async {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => TakePictureScreen(
@@ -28,34 +31,36 @@ class UploadTypeScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
+                  child: const CircleAvatar(
+                    radius: 40, // Adjust radius for size
                     backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
-                  ),
-                  child: const Text(
-                    "Camera",
-                    style: TextStyle(color: Colors.white),
+                    child: Text(
+                      "Camera",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () async {
+                const SizedBox(width: 20), // Spacing between buttons
+                // Gallery Button
+                GestureDetector(
+                  onTap: () async {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => PickImageScreen(),
                       ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
+                  child: const CircleAvatar(
+                    radius: 40, // Adjust radius for size
                     backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
-                  ),
-                  child: const Text(
-                    "Gallery",
-                    style: TextStyle(color: Colors.white),
+                    child: Text(
+                      "Gallery",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-            ]),
+              ],
+            ),
           ],
         ),
       ),
