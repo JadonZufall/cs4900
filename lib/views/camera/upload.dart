@@ -44,12 +44,14 @@ class UploadScreenState extends State<UploadScreen> {
         {
           "url": imageURL,
           "author": localUser.uid,
+          "timeUploaded": DateTime.now(),
         }
     );
     await FirebaseFirestore.instance.collection("Users").doc(localUser.uid).collection("images").add(
         {
           "url": imageURL,
           "author": localUser.uid,
+          "timeUploaded": DateTime.now(),
         }
     );
     log("image uploaded");
