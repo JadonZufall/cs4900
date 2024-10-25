@@ -84,6 +84,11 @@ class UserInformation {
     return result;
   }
 
+  Future<String> getUploadCount() async {
+    QuerySnapshot<Map<String, dynamic>> imageSnapshot = await db.collection("Users").doc(uid).collection("images").get();
+    return imageSnapshot.size.toString();
+  }
+
   UserInformation(this.uid) {
     func() async => await db.collection("Users").doc(uid).get();
     snapshot = func();

@@ -122,6 +122,20 @@ class MyProfileScreenState extends State<MyProfileScreen> {
     );
 
 
+
+    FutureBuilder<String> uploadCount = FutureBuilder<String>(
+      future: userInformation.getUploadCount(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return _buildStatColumn("Posts", snapshot.data ?? "?");
+        }
+        else {
+          return _buildStatColumn("Posts", "?");
+        }
+      }
+    );
+
+
     Column body = Column(
       children: [
         Container(
@@ -145,9 +159,9 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildStatColumn('Posts', 0),
-                        _buildStatColumn('Followers', 0),
-                        _buildStatColumn('Following', 0),
+                        uploadCount,
+                        _buildStatColumn('Followers', "0"),
+                        _buildStatColumn('Following', "0"),
                       ],
                     ),
                   ],
@@ -181,12 +195,12 @@ class MyProfileScreenState extends State<MyProfileScreen> {
   }
 
 
-  Widget _buildStatColumn(String label, int count) {
+  Widget _buildStatColumn(String label, String count) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          count.toString(), // converts int data for followers / posts / following to string
+          count, // converts int data for followers / posts / following to string
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
