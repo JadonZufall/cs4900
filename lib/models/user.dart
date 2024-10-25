@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -40,6 +40,14 @@ class UserInformation {
     }
   }
 
+  Future<void> setBio(String value) async {
+    return await db.collection("Users").doc(uid).update({"bio": value});
+  }
+
+  Future<void> setUsername(String value) async {
+    return await db.collection("Users").doc(uid).update({"username": value});
+  }
+
   Future<String> getProfilePicture() async {
     snapshot ??= db.collection("Users").doc(uid).get();
     try {
@@ -62,9 +70,18 @@ class UserInformation {
     }
   }
 
-  Future<List<String>> getUploadedImages() async {
+  Future<List<Map<String, dynamic>>> getUploadedImages() async {
     snapshot ??= db.collection("Users").doc(uid).get();
-    return [];
+
+    List<Map<String, dynamic>> result = [];
+    QuerySnapshot<Map<String, dynamic>> imageSnapshot = await db.collection("Users").doc(uid).collection("images").get();
+    log(imageSnapshot.docs.length.toString());
+    for (var i = 0; i < imageSnapshot.docs.length; i++) {
+
+      QueryDocumentSnapshot<Map<String, dynamic>> doc = imageSnapshot.docs.elementAt(i);
+      result.add({"id": doc.id, "url": doc.get("url")});
+    }
+    return result;
   }
 
   UserInformation(this.uid) {
