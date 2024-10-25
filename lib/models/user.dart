@@ -48,6 +48,16 @@ class UserInformation {
     return await db.collection("Users").doc(uid).update({"username": value});
   }
 
+  Future<List<String>> getFollowers() async {
+    snapshot ??= db.collection("Users").doc(uid).get();
+    return (await snapshot)!.get("followers");
+  }
+
+  Future<List<String>> getFollowing() async {
+    snapshot ??= db.collection("Users").doc(uid).get();
+    return (await snapshot)!.get("following");
+  }
+
   Future<String> getProfilePicture() async {
     snapshot ??= db.collection("Users").doc(uid).get();
     try {
