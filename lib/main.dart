@@ -19,6 +19,7 @@ import 'package:cs4900/views/profile/my_profile.dart';
 import 'package:cs4900/views/profile_setup.dart';
 import 'package:cs4900/views/profile.dart';
 import 'package:cs4900/views/camera/photo.dart';
+import 'package:cs4900/views/profile/my_profile_settings.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class RouteNames {
@@ -32,7 +33,7 @@ class RouteNames {
   static const String profileSetupScreenRoute = "/profile_setup";
   static const String uploadTypeScreenRoute = "/upload_type";
   static const String uploadScreenRoute = "/upload";
-  static const String myProfileSettingsRoute = "/profile_setup";
+  static const String myProfileSettingsRoute = "/my_profile_settings";
 }
 
 class Router {
@@ -66,6 +67,8 @@ class Router {
         });
       case RouteNames.uploadTypeScreenRoute:
           return MaterialPageRoute(builder: (_) => UploadTypeScreen());
+      case RouteNames.myProfileSettingsRoute:
+        return MaterialPageRoute(builder: (_) => MyProfileSettingsScreen());
       default:
         return MaterialPageRoute(builder: (_) => Scaffold(
           body: Center(child: Text("No route defined for ${settings.name}"))
