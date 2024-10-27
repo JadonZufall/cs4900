@@ -15,7 +15,7 @@ class EditScreen extends StatelessWidget {
 
   EditScreen({super.key, required this.imagePath});
 
-  final List<List<double>> filters = [GREYSCALE, GALAXY, AGED];
+  final List<List<double>> filters = [NOFILTER, GREYSCALE, GALAXY, AGED];
   final PageController _pageController = PageController();
   int _currentFilterIndex = 0;
 

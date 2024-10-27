@@ -209,9 +209,10 @@ class MyProfileScreenState extends State<MyProfileScreen> {
 
 
     return Scaffold(
-      appBar: AppBar(title: const Text("My Profile")),
+      appBar: AppBar(title: const Text("My Profile"),
+        backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
+        foregroundColor: Colors.white,),
       body: body,
-      floatingActionButton: FloatingActionButton(onPressed: _editProfileButton, child: const Icon(Icons.settings)),
     );
   }
 
