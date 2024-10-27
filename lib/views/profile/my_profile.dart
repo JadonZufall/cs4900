@@ -135,6 +135,27 @@ class MyProfileScreenState extends State<MyProfileScreen> {
       }
     );
 
+    FutureBuilder<int> followerCount = FutureBuilder<int>(
+      future: userInformation.getFollowers().then((followers) => followers.length),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return _buildStatColumn("Followers", snapshot.data?.toString() ?? "0");
+        } else {
+          return _buildStatColumn("Followers", "?");
+        }
+      }
+    );
+
+    FutureBuilder<int> followingCount = FutureBuilder<int>(
+      future: userInformation.getFollowing().then((following) => following.length),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return _buildStatColumn("Following", snapshot.data?.toString() ?? "0");
+        } else {
+          return _buildStatColumn("Following", "?");
+        }
+      }
+    );
 
     Column body = Column(
       children: [
@@ -160,8 +181,8 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         uploadCount,
-                        _buildStatColumn('Followers', "0"),
-                        _buildStatColumn('Following', "0"),
+                        followerCount,
+                        followingCount,
                       ],
                     ),
                   ],
