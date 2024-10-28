@@ -16,10 +16,12 @@ import 'package:cs4900/views/feed.dart';
 import 'package:cs4900/views/post.dart';
 //import 'package:cs4900/views/my_profile.dart';
 import 'package:cs4900/views/profile/my_profile.dart';
+import 'package:cs4900/views/profile/public_profile.dart';
 import 'package:cs4900/views/profile_setup.dart';
 import 'package:cs4900/views/profile.dart';
 import 'package:cs4900/views/camera/photo.dart';
 import 'package:cs4900/views/profile/my_profile_settings.dart';
+import 'package:cs4900/views/search/search.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class RouteNames {
@@ -34,6 +36,8 @@ class RouteNames {
   static const String uploadTypeScreenRoute = "/upload_type";
   static const String uploadScreenRoute = "/upload";
   static const String myProfileSettingsRoute = "/my_profile_settings";
+  static const String searchScreenRoute = "/search";
+  static const String publicProfileRoute = '/publicProfile';
 }
 
 class Router {
@@ -49,6 +53,11 @@ class Router {
         return MaterialPageRoute(builder: (_) => SignUpScreen());
       case RouteNames.profileScreenRoute:
         return MaterialPageRoute(builder: (_) => ProfileScreen());
+      case RouteNames.publicProfileRoute:
+        final args = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+          builder: (_) => PublicProfileScreen(userId: args['userId']!),
+        );
       case RouteNames.myProfileScreenRoute:
         return MaterialPageRoute(builder: (_) {
           return MyProfileScreen();
@@ -69,6 +78,8 @@ class Router {
           return MaterialPageRoute(builder: (_) => UploadTypeScreen());
       case RouteNames.myProfileSettingsRoute:
         return MaterialPageRoute(builder: (_) => MyProfileSettingsScreen());
+      case RouteNames.searchScreenRoute:
+        return MaterialPageRoute(builder: (_) => SearchPage());
       default:
         return MaterialPageRoute(builder: (_) => Scaffold(
           body: Center(child: Text("No route defined for ${settings.name}"))
