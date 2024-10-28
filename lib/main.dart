@@ -15,11 +15,9 @@ import 'package:cs4900/views/signin.dart';
 import 'package:cs4900/views/signup.dart';
 import 'package:cs4900/views/feed.dart';
 import 'package:cs4900/views/post.dart';
-//import 'package:cs4900/views/my_profile.dart';
 import 'package:cs4900/views/profile/my_profile.dart';
 import 'package:cs4900/views/profile/public_profile.dart';
 import 'package:cs4900/views/profile_setup.dart';
-import 'package:cs4900/views/profile.dart';
 import 'package:cs4900/views/camera/photo.dart';
 import 'package:cs4900/views/profile/my_profile_settings.dart';
 import 'package:cs4900/views/search/search.dart';
@@ -53,8 +51,6 @@ class Router {
         return MaterialPageRoute(builder: (_) => SignInScreen());
       case RouteNames.signupScreenRoute:
         return MaterialPageRoute(builder: (_) => SignUpScreen());
-      case RouteNames.profileScreenRoute:
-        return MaterialPageRoute(builder: (_) => ProfileScreen());
       case RouteNames.publicProfileRoute:
         final args = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
