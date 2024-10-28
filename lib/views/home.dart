@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _notificationsButton() {
-    log("Unimplemented view");
+    log("Nav view");
   }
 
   void _profileButton() {
@@ -35,6 +35,10 @@ class HomeScreen extends StatelessWidget {
 
   void _uploadButton() {
     navigatorKey.currentState?.pushNamed(RouteNames.uploadTypeScreenRoute);
+  }
+
+  void _directMessageButton() {
+    navigatorKey.currentState?.pushNamed(RouteNames.directMessageRoute);
   }
 
   @override
@@ -63,6 +67,17 @@ class HomeScreen extends StatelessWidget {
       centerTitle: true,
       backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
       foregroundColor: Colors.white,
+      actions: <Widget>[
+        IconButton(
+            icon: Icon(
+                Icons.message,
+                color: Colors.white,
+            ),
+            onPressed: () {
+              _directMessageButton();
+            },
+        )
+      ],
     );
 
     Text usernameLabel = Text(username);

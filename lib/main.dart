@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cs4900/views/message/direct_messages.dart';
 import 'package:cs4900/views/upload_type.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -38,6 +39,7 @@ class RouteNames {
   static const String myProfileSettingsRoute = "/my_profile_settings";
   static const String searchScreenRoute = "/search";
   static const String publicProfileRoute = '/publicProfile';
+  static const String directMessageRoute = '/direct_message';
 }
 
 class Router {
@@ -80,6 +82,8 @@ class Router {
         return MaterialPageRoute(builder: (_) => MyProfileSettingsScreen());
       case RouteNames.searchScreenRoute:
         return MaterialPageRoute(builder: (_) => SearchPage());
+      case RouteNames.directMessageRoute:
+        return MaterialPageRoute(builder: (_) => DirectMessagesScreen());
       default:
         return MaterialPageRoute(builder: (_) => Scaffold(
           body: Center(child: Text("No route defined for ${settings.name}"))
