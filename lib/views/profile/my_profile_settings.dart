@@ -19,7 +19,8 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
 
-  late UserInformation userInformation = UserInformation(FirebaseAuth.instance.currentUser!.uid);
+  late UserInformation userInformation =
+      UserInformation(FirebaseAuth.instance.currentUser!.uid);
 
   void _saveUsernameButton() async {
     String value = _usernameController.text;
@@ -30,7 +31,6 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
   }
 
   void _saveBioButton() async {
-
     String value = _bioController.text;
     await userInformation.setBio(value);
     _bioController.clear();
@@ -38,10 +38,8 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
     navigatorKey.currentState?.pop();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     TextStyle labelTextStyle = const TextStyle(
       color: Colors.white,
       fontSize: 12,
@@ -49,23 +47,26 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
     );
 
     InputDecoration usernameInputDecoration = InputDecoration(
-        labelText: "Username",
-        labelStyle: const TextStyle(color:  Color.fromRGBO(148, 173, 199, 1)),
-        filled: true,
-        fillColor: const Color.fromRGBO(255, 255, 255, 1),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-          borderSide: BorderSide.none,
-        ),
-      );
+      labelText: "Username",
+      labelStyle: const TextStyle(color: Color.fromRGBO(148, 173, 199, 1)),
+      filled: true,
+      fillColor: const Color.fromRGBO(32, 49, 68, 1),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: BorderSide.none,
+      ),
+    );
 
     Container changeUsernameField = Container(
       child: Column(
         children: [
           Text("Change Username", style: labelTextStyle),
-          TextField(
-            controller: _usernameController,
-            decoration: usernameInputDecoration,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _usernameController,
+              decoration: usernameInputDecoration,
+            ),
           ),
         ],
       ),
@@ -73,9 +74,9 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
 
     InputDecoration bioInputDecoration = InputDecoration(
       labelText: "Bio",
-      labelStyle: const TextStyle(color:  Color.fromRGBO(148, 173, 199, 1)),
+      labelStyle: const TextStyle(color: Color.fromRGBO(148, 173, 199, 1)),
       filled: true,
-      fillColor: const Color.fromRGBO(255, 255, 255, 1),
+      fillColor: const Color.fromRGBO(32, 49, 68, 1),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
         borderSide: BorderSide.none,
@@ -86,28 +87,44 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
       child: Column(
         children: [
           Text("Change Bio", style: labelTextStyle),
-          TextField(
-            controller: _bioController,
-            decoration: bioInputDecoration,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _bioController,
+              decoration: bioInputDecoration,
+            ),
           ),
         ],
       ),
     );
 
-    Column body = Column(
-      children: [
-        changeUsernameField,
-        ElevatedButton(onPressed: _saveUsernameButton, child: const Text("Save Username")),
-        changeBioField,
-        ElevatedButton(onPressed: _saveBioButton, child: const Text("Save Bio")),
-
-      ]
-    );
+    Column body = Column(children: [
+      changeUsernameField,
+      ElevatedButton(
+        onPressed: _saveUsernameButton,
+        style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromRGBO(32, 49, 68, 1)),
+        child:
+            const Text("Save Username", style: TextStyle(color: Colors.white)),
+      ),
+      const SizedBox(height: 64.0),
+      changeBioField,
+      ElevatedButton(
+        onPressed: _saveBioButton,
+        style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromRGBO(32, 49, 68, 1)),
+        child:
+            const Text("Save Bio", style: TextStyle(color: Colors.white)),
+      ),
+    ]);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("My Profile Settings")),
+      appBar: AppBar(
+        title: const Text("My Profile Settings"),
+        backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
+        foregroundColor: Colors.white,
+      ),
       body: body,
     );
   }
-
 }
