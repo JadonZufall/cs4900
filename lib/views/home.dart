@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _searchButton() {
-    log("Unimplemented view");
+    navigatorKey.currentState?.pushNamed(RouteNames.searchScreenRoute);
   }
 
   void _notificationsButton() {
