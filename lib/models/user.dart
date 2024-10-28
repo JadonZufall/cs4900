@@ -58,6 +58,10 @@ class UserInformation {
     return (await snapshot)!.get("following");
   }
 
+  Future<void> setProfilePicture(String url) async {
+    return await db.collection("Users").doc(uid).update({"profile_picture": url});
+  }
+
   Future<String> getProfilePicture() async {
     snapshot ??= db.collection("Users").doc(uid).get();
     try {

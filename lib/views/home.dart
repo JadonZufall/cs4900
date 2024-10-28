@@ -22,10 +22,12 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _searchButton() {
+    log("_SearchButton");
     navigatorKey.currentState?.pushNamed(RouteNames.searchScreenRoute);
   }
 
   void _notificationsButton() {
+    log("_nav button");
     log("Nav view");
   }
 
