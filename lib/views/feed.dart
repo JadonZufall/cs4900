@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cs4900/components/photo_display.dart';
 
 class FeedScreen extends StatelessWidget {
   FeedScreen({super.key});
@@ -17,7 +18,8 @@ class FeedScreen extends StatelessWidget {
         SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              return Column(
+              return PhotoDisplayComponent(imageId: "82A3VxxdmtkhGoOpq0PQ");
+              /*return Column(
                 children: [
                   Container(
                     width: 375,
@@ -130,7 +132,7 @@ class FeedScreen extends StatelessWidget {
                     ),
                   ),
                 ],
-              );
+              );*/
             },
             // DEFINES HOW MANY POSTS TO BE LOADED IN FEED
             childCount: 10,
