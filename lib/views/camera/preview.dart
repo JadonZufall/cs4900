@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 import 'package:camera/camera.dart';
 import 'package:path/path.dart';
@@ -51,7 +52,22 @@ class PreviewPictureScreen extends StatelessWidget {
     // navigatorKey.currentState?.pushNamed(RouteNames.uploadScreenRoute);
   }
 
-  void _edit() {}
+   Future<String?> _cropImage(String imagePath) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: imagePath,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Crop Image',
+          toolbarColor: const Color.fromRGBO(32, 49, 68, 1),
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+      ],
+    );
+
+    return croppedFile?.path; // Return the path of the cropped image
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,10 +124,37 @@ class PreviewPictureScreen extends StatelessWidget {
                   backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
                 ),
                 child: const Text(
-                  "Edit",
+                  "Add Filters",
                   style: TextStyle(color: Colors.white),
                 ),
               ),
+            ),
+              Center(
+              child: ElevatedButton(
+              onPressed: () async {
+                final croppedImagePath = await _cropImage(imagePath);
+                if (croppedImagePath != null) {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          PreviewPictureScreen(imagePath: croppedImagePath),
+                    ),
+                  );
+                } else {
+                  // Handle the case where cropping was cancelled or failed
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Cropping was cancelled.")),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
+              ),
+              child: const Text(
+                "Crop",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
             ),
           ]),
         ],

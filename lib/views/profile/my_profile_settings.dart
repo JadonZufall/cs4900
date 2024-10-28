@@ -107,6 +107,7 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
         child:
             const Text("Save Username", style: TextStyle(color: Colors.white)),
       ),
+      const SizedBox(height: 64.0),
       changeBioField,
       ElevatedButton(
         onPressed: _saveBioButton,

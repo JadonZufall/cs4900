@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:cs4900/auth.dart';
 import 'package:cs4900/views/signin.dart';
 
-
-
 class SignUpScreen extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -15,7 +13,8 @@ class SignUpScreen extends StatelessWidget {
 
   void _signup() {
     log("Signup button pressed");
-    signupWithEmailAndPassword(_usernameController.text.trim(), _passwordController.text.trim());
+    signupWithEmailAndPassword(
+        _usernameController.text.trim(), _passwordController.text.trim());
     _usernameController.clear();
     _passwordController.clear();
     navigatorKey.currentState?.pushReplacementNamed("/signin");
@@ -23,38 +22,30 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-        centerTitle: true,
-        backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
-        foregroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Switch(
-              value: true,
-              activeColor: Colors.blue,
-              onChanged: (bool value) {},
-            ),
-
+        appBar: AppBar(
+          title: const Text('Sign Up'),
+          centerTitle: true,
+          backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
+          foregroundColor: Colors.white,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(children: [
             // Username field.
             TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  labelStyle: const TextStyle(color:  Color.fromRGBO(148, 173, 199, 1)),
-                  filled: true,
-                  fillColor: const Color.fromRGBO(255, 255, 255, 1),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide.none,
-                  ),
-                )
+              controller: _usernameController,
+              decoration: InputDecoration(
+                labelText: "Email",
+                labelStyle: const TextStyle(color: Colors.white),
+                filled: true,
+                fillColor: const Color.fromRGBO(32, 49, 68, 1),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              style: const TextStyle(color: Colors.white),
             ),
 
             const SizedBox(height: 10.0),
@@ -64,24 +55,33 @@ class SignUpScreen extends StatelessWidget {
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: "Password",
-                labelStyle: const TextStyle(color:  Color.fromRGBO(148, 173, 199, 1)),
+                labelStyle: const TextStyle(color: Colors.white),
                 filled: true,
-                fillColor: const Color.fromRGBO(255, 255, 255, 1),
+                fillColor: const Color.fromRGBO(32, 49, 68, 1),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10.0),
                   borderSide: BorderSide.none,
                 ),
               ),
+              style: const TextStyle(color: Colors.white),
               obscureText: true,
             ),
 
             const SizedBox(height: 10.0),
 
-            ElevatedButton(onPressed: _signup, child: const Text("Sign Up")),
-
-          ]
-        ),
-      )
-    );
+            ElevatedButton(
+              onPressed: _signup,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
+              ),
+              child: const Text(
+                "Sign Up",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ]),
+        ));
   }
 }
