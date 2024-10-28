@@ -68,6 +68,7 @@ class UserInstance extends ModelInterface {
     ModelField("likes"),
     ModelField("followers"),
     ModelField("following"),
+    ModelField("profile_picture"),
   ];
 
   String uid;
@@ -170,6 +171,7 @@ class UserModel {
       "username": username,
       "bio": null,
       "phone": phone,
+      "profile_picture": "https://shorturl.at/lj8F7",
       "followers": [],
       "following": [],
       "likes": [],
