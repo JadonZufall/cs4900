@@ -21,6 +21,7 @@ import 'package:cs4900/views/profile_setup.dart';
 import 'package:cs4900/views/camera/photo.dart';
 import 'package:cs4900/views/profile/my_profile_settings.dart';
 import 'package:cs4900/views/search/search.dart';
+import 'package:cs4900/views/camera/upload.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class RouteNames {
@@ -34,6 +35,7 @@ class RouteNames {
   static const String profileSetupScreenRoute = "/profile_setup";
   static const String uploadTypeScreenRoute = "/upload_type";
   static const String uploadScreenRoute = "/upload";
+  static const String profilePictureScreenRoute = "/uploadProfilePicture";
   static const String myProfileSettingsRoute = "/my_profile_settings";
   static const String searchScreenRoute = "/search";
   static const String publicProfileRoute = '/publicProfile';
@@ -67,19 +69,21 @@ class Router {
       case RouteNames.uploadScreenRoute:
         return MaterialPageRoute(builder: (_) {
           if (primaryCamera != null) {
-            return TakePictureScreen(camera: primaryCamera as CameraDescription);
+            return TakePictureScreen(camera: primaryCamera as CameraDescription, uploadType: UploadType.imageUpload);
           }
           log("Unable to find primary camera!");
           return HomeScreen();
         });
       case RouteNames.uploadTypeScreenRoute:
-          return MaterialPageRoute(builder: (_) => UploadTypeScreen());
+          return MaterialPageRoute(builder: (_) => UploadTypeScreen(uploadType: UploadType.imageUpload));
       case RouteNames.myProfileSettingsRoute:
         return MaterialPageRoute(builder: (_) => MyProfileSettingsScreen());
       case RouteNames.searchScreenRoute:
         return MaterialPageRoute(builder: (_) => SearchPage());
       case RouteNames.directMessageRoute:
         return MaterialPageRoute(builder: (_) => DirectMessagesScreen());
+      case RouteNames.profilePictureScreenRoute:
+        return MaterialPageRoute(builder: (_) => UploadTypeScreen(uploadType: UploadType.profilePictureUpload));
       default:
         return MaterialPageRoute(builder: (_) => Scaffold(
           body: Center(child: Text("No route defined for ${settings.name}"))

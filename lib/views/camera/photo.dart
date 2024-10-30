@@ -3,16 +3,20 @@
 
 import 'dart:developer';
 import 'package:cs4900/main.dart';
+import 'package:cs4900/views/upload_type.dart';
 import 'package:flutter/material.dart';
 import 'package:cs4900/main.dart';
 import 'package:camera/camera.dart';
 import 'package:cs4900/views/camera/preview.dart';
+import 'package:cs4900/views/camera/upload.dart';
 
 
 class TakePictureScreen extends StatefulWidget {
-  const TakePictureScreen({super.key, required this.camera});
-
   final CameraDescription camera;
+  final UploadType uploadType;
+
+  const TakePictureScreen({super.key, required this.camera, required this.uploadType});
+
 
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
@@ -66,7 +70,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => PreviewPictureScreen(
-                  imagePath: image.path
+                  imagePath: image.path,
+                  uploadType: widget.uploadType,
               ),
             ),
           );

@@ -18,34 +18,8 @@ import 'package:cs4900/views/camera/edit.dart';
 
 class PreviewPictureScreen extends StatelessWidget {
   final String imagePath;
-  const PreviewPictureScreen({super.key, required this.imagePath});
-
-  Future<void> _upload() async {
-    log("Upload started");
-    String filename = DateTime.now().millisecondsSinceEpoch.toString();
-    Reference storageReference =
-        FirebaseStorage.instance.ref().child("images/$filename");
-    UploadTask uploadTask = storageReference.putFile(File(imagePath));
-    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {
-      log("Image upload completed.");
-    });
-    String imageURL = await taskSnapshot.ref.getDownloadURL();
-    User? localUser = FirebaseAuth.instance.currentUser!;
-    await FirebaseFirestore.instance.collection("images").add({
-      "url": imageURL,
-      "author": localUser.uid,
-    });
-    await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(localUser.uid)
-        .collection("images")
-        .add({
-      "url": imageURL,
-      "author": localUser.uid,
-    });
-    log("image uploaded");
-    navigatorKey.currentState?.pushReplacementNamed(RouteNames.homeScreenRoute);
-  }
+  final UploadType uploadType;
+  const PreviewPictureScreen({super.key, required this.imagePath, required this.uploadType});
 
   void _retake() {
     navigatorKey.currentState?.pop();
@@ -98,7 +72,7 @@ class PreviewPictureScreen extends StatelessWidget {
                 onPressed: () async {
                   await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => UploadScreen(imagePath: imagePath),
+                      builder: (context) => UploadScreen(imagePath: imagePath, type: uploadType),
                     ),
                   );
                 },
@@ -116,7 +90,7 @@ class PreviewPictureScreen extends StatelessWidget {
                 onPressed: () async {
                   await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => EditScreen(imagePath: imagePath),
+                      builder: (context) => EditScreen(imagePath: imagePath, uploadType: uploadType,),
                     ),
                   );
                 },
@@ -137,7 +111,7 @@ class PreviewPictureScreen extends StatelessWidget {
                   await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>
-                          PreviewPictureScreen(imagePath: croppedImagePath),
+                          PreviewPictureScreen(imagePath: croppedImagePath, uploadType: uploadType),
                     ),
                   );
                 } else {

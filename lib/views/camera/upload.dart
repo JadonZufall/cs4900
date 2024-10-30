@@ -10,11 +10,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:cs4900/main.dart';
 
+enum UploadType { imageUpload, profilePictureUpload }
 
 class UploadScreen extends StatefulWidget {
   final String imagePath;
+  final UploadType type;
 
-  UploadScreen({super.key, required this.imagePath});
+  UploadScreen({super.key, required this.imagePath, required this.type});
 
   @override
   State<UploadScreen> createState() => UploadScreenState();
@@ -27,6 +29,21 @@ class UploadScreenState extends State<UploadScreen> {
 
   void _doneButton() {
     navigatorKey.currentState?.pushNamed(RouteNames.homeScreenRoute);
+  }
+
+  Future<String> _uploadProfilePicture() async {
+    log("Upload Profile Picture Started");
+    String filename = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference storageReference = FirebaseStorage.instance.ref().child("ProfilePictures/$filename");
+    File file = File(widget.imagePath);
+    UploadTask uploadTask = storageReference.putFile(file);
+    _uploadTask = uploadTask;
+    log("Bound uploadtask");
+    TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() { log("Image upload completed."); });
+    String imageURL = await taskSnapshot.ref.getDownloadURL();
+    User? localUser = FirebaseAuth.instance.currentUser!;
+    await FirebaseFirestore.instance.collection("Users").doc(localUser.uid).update({"profile_picture": imageURL});
+    return imageURL;
   }
 
   Future<String> _upload() async {
@@ -99,7 +116,7 @@ class UploadScreenState extends State<UploadScreen> {
     );
 
     FutureBuilder<String> uploadProgress = FutureBuilder<String>(
-      future: _upload(),
+      future: widget.type == UploadType.imageUpload ? _upload() : _uploadProfilePicture(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return ElevatedButton(

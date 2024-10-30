@@ -27,8 +27,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _notificationsButton() {
-    log("_nav button");
-    log("Nav view");
+    log("Unimplemented view");
   }
 
   void _profileButton() {
