@@ -1,16 +1,22 @@
+import 'dart:developer';
 import 'package:cs4900/views/camera/pick_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cs4900/main.dart';
 import 'package:cs4900/views/camera/upload.dart';
 import 'package:cs4900/views/camera/photo.dart';
 import 'package:camera/camera.dart';
+import 'package:cs4900/views/camera/upload.dart';
 
 class UploadTypeScreen extends StatelessWidget {
+  final UploadType uploadType;
+
+  const UploadTypeScreen({super.key, required this.uploadType});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Image Type'),
+        title: Text("Select ${this.uploadType == UploadType.imageUpload ? 'Image':'Profile Picture'} Type"),
         backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
         foregroundColor: Colors.white,
       ),
@@ -27,7 +33,9 @@ class UploadTypeScreen extends StatelessWidget {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => TakePictureScreen(
-                            camera: primaryCamera as CameraDescription),
+                            camera: primaryCamera as CameraDescription,
+                            uploadType: uploadType,
+                        ),
                       ),
                     );
                   },
@@ -46,7 +54,7 @@ class UploadTypeScreen extends StatelessWidget {
                   onTap: () async {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => PickImageScreen(),
+                        builder: (context) => PickImageScreen(uploadType: uploadType,),
                       ),
                     );
                   },

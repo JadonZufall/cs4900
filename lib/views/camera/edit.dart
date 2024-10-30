@@ -10,11 +10,13 @@ import 'package:cs4900/main.dart';
 import 'filters.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:cs4900/views/camera/upload.dart';
 
 class EditScreen extends StatelessWidget {
   final String imagePath;
+  final UploadType uploadType;
 
-  EditScreen({super.key, required this.imagePath});
+  EditScreen({super.key, required this.imagePath, required this.uploadType});
 
   final List<List<double>> filters = [NOFILTER, GREYSCALE, GALAXY, AGED];
   final PageController _pageController = PageController();
@@ -84,7 +86,8 @@ class EditScreen extends StatelessWidget {
                 await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) =>
-                        PreviewPictureScreen(imagePath: filteredImagePath),
+                        PreviewPictureScreen(imagePath: filteredImagePath,
+                        uploadType: uploadType,),
                   ),
                 );
               },

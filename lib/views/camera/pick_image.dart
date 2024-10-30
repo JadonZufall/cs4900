@@ -1,10 +1,16 @@
 import 'dart:io';
 
 import 'package:cs4900/views/camera/preview.dart';
+import 'package:cs4900/views/upload_type.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cs4900/views/camera/upload.dart';
 
 class PickImageScreen extends StatefulWidget {
+  final UploadType uploadType;
+
+  PickImageScreen({super.key, required this.uploadType});
+
   @override
   _PickImageState createState() => _PickImageState();
 }
@@ -56,7 +62,10 @@ class _PickImageState extends State<PickImageScreen> {
                   await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>
-                          PreviewPictureScreen(imagePath: _image!.path),
+                          PreviewPictureScreen(
+                            imagePath: _image!.path,
+                            uploadType: UploadType.imageUpload,
+                          ),
                     ),
                   );
                 },

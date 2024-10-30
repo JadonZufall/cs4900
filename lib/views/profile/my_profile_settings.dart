@@ -38,6 +38,10 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
     navigatorKey.currentState?.pop();
   }
 
+  void _saveProfilePictureButton() {
+    navigatorKey.currentState?.pushNamed(RouteNames.profilePictureScreenRoute);
+  }
+
   @override
   Widget build(BuildContext context) {
     TextStyle labelTextStyle = const TextStyle(
@@ -116,6 +120,12 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
         child:
             const Text("Save Bio", style: TextStyle(color: Colors.white)),
       ),
+      ElevatedButton(
+          onPressed: _saveProfilePictureButton,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromRGBO(32, 49, 68, 1)),
+          child: const Text("Update Profile Picture", style: TextStyle(color: Colors.white))
+      )
     ]);
 
     return Scaffold(
