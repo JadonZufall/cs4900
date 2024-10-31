@@ -135,7 +135,7 @@ class FeedScreen extends StatelessWidget {
               );*/
             },
             // DEFINES HOW MANY POSTS TO BE LOADED IN FEED
-            childCount: 10,
+
           ),
         ),
       ]),
