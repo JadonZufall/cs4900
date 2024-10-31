@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:cs4900/auth.dart';
 import 'package:cs4900/models/user.dart';
+import 'package:cs4900/views/message/single_inbox.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,14 +19,20 @@ class InboxScreen extends StatefulWidget {
 }
 
 class InboxScreenState extends State<InboxScreen> {
+
+  User? user = FirebaseAuth.instance.currentUser!;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   String searchText = '';
 
+  var _future;
+
   @override
   void initState() {
     super.initState();
+    reloadConversations();
     _focusNode.addListener(_onFocusChange);
+    _future = reloadConversations();
   }
 
   @override
@@ -36,7 +44,8 @@ class InboxScreenState extends State<InboxScreen> {
   }
 
   void _onFocusChange() {
-    setState(() {}); // Trigger rebuild to show/hide user list
+    // Trigger rebuild to show/hide user list
+    setState(() {});
   }
 
   void _onSearchChanged(String value) {
@@ -45,43 +54,110 @@ class InboxScreenState extends State<InboxScreen> {
     });
   }
 
+  Future<List<Map<String, dynamic>>> reloadConversations() async {
+    return await updateConversations();
+  }
+
+  Future<List<Map<String, dynamic>>> updateConversations() async {
+    List<Map<String, dynamic>> conversations = [];
+
+    var querySnapshot = await FirebaseFirestore.instance.collection("Conversations/${user!.uid}/OpenConversations").get();
+    for(var docSnapshot in querySnapshot.docs) {
+      UserInformation recipient = new UserInformation(docSnapshot.id);
+
+      conversations.add({
+        "lastMessage": docSnapshot.get("lastMessage"),
+        "timeStamp": docSnapshot.get("timeStamp"),
+        "recipientPfp": Image.network(await recipient.getProfilePicture()),
+        "recipientName": await recipient.getUsername(),
+        "recipientUid": recipient.uid
+      });
+    }
+    return conversations;
+  }
+
+
+
+  Widget buildActiveInboxes(List<Map<String, dynamic>> conversations) {
+    return Expanded(
+      child: Container(
+          child: CustomScrollView(
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate((context,index) {
+                  return InboxBlob(
+                      recipientUserName: conversations[index]["recipientName"],
+                      recipientPfp: conversations[index]["recipientPfp"],
+                      recipientUid: conversations[index]["recipientUid"],
+                      lastMessage: conversations[index]["lastMessage"],
+                  );
+                },
+                childCount: conversations.length),
+              )
+            ],
+          ),
+        margin: EdgeInsets.only(left: 10, right: 10)
+      )
+    );
+  }
+
+  Widget buildWidget(List<Map<String, dynamic>> conversations) {
+    return Column(
+        children: [
+          Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _searchController,
+                focusNode: _focusNode,
+                onChanged: _onSearchChanged,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Search Users',
+                  hintStyle: TextStyle(color: Colors.white54),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8)
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  prefixIcon: Icon(Icons.search, color: Colors.white),
+                ),
+              )
+          ),
+          if (_focusNode.hasFocus || searchText.isNotEmpty)
+            Expanded(
+                child: Container( constraints: BoxConstraints(minHeight: 300), child: SearchHelpers.get(searchText, _focusNode, RouteNames.directMessageRoute))
+            ),
+          Text("Existing Conversations", style: TextStyle(color: Colors.white, fontSize: 16)),
+          buildActiveInboxes(conversations)
+        ]
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget loadingState = const Center(child: CircularProgressIndicator());
+
+    FutureBuilder<List<Map<String, dynamic>>> builder = FutureBuilder<List<Map<String, dynamic>>> (
+        future: _future,
+        builder: ( context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.data == null) {
+              log("Error: snapshot data is null");
+              return loadingState;
+            }
+            return buildWidget(snapshot.data!);
+          }
+          else {
+            return loadingState;
+          }
+        }
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inbox'),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              focusNode: _focusNode,
-              onChanged: _onSearchChanged,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'Search Users',
-                hintStyle: TextStyle(color: Colors.white54),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8)
-                ),
-                filled: true,
-                fillColor: Colors.grey[800],
-                prefixIcon: Icon(Icons.search, color: Colors.white),
-              ),
-            )
-          ),
-          if (_focusNode.hasFocus || searchText.isNotEmpty)
-            Expanded(
-                child: SearchHelpers.get(searchText, _focusNode, RouteNames.directMessageRoute)
-            ),
-          SizedBox(
-            height: 100,
-            child: Text("Open Messages", style: TextStyle(fontSize: 16, color: Colors.white),)
-          )
-        ]
-      ),
+      body: builder,
     );
     
   }

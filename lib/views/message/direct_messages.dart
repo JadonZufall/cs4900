@@ -57,12 +57,28 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
     var message = {
       "MessageId": sender!.uid + "${messages.length}",
       "user": sender!.uid,
-      "Message": value
+      "Message": value,
+      "Timestamp": DateTime.now().millisecondsSinceEpoch.toString()
     };
 
     await FirebaseFirestore.instance.collection("MessageLogs").doc(messageLogReference!.id).update({
       "Messages": FieldValue.arrayUnion([message])
     });
+
+    await FirebaseFirestore.instance.collection("Conversations/${sender!.uid}/OpenConversations").doc(widget.recieverUserId).set(
+      {
+        "lastMessage" : value,
+        "timeStamp" : DateTime.now().microsecondsSinceEpoch.toString(),
+      },
+      SetOptions(merge: true)
+    );
+    await FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).set(
+        {
+          "lastMessage" : value,
+          "timeStamp" : DateTime.now().microsecondsSinceEpoch.toString(),
+        },
+        SetOptions(merge: true)
+    );
   }
 
   Future<Map<String, dynamic>> buildInfo() async {
