@@ -27,14 +27,12 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
     await userInformation.setUsername(value);
     _usernameController.clear();
     navigatorKey.currentState?.pop();
-    navigatorKey.currentState?.pop();
   }
 
   void _saveBioButton() async {
     String value = _bioController.text;
     await userInformation.setBio(value);
     _bioController.clear();
-    navigatorKey.currentState?.pop();
     navigatorKey.currentState?.pop();
   }
 
@@ -70,6 +68,9 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
             child: TextField(
               controller: _usernameController,
               decoration: usernameInputDecoration,
+              style: const TextStyle(
+                color: Color.fromRGBO(255, 255, 255, 1),
+              )
             ),
           ),
         ],
@@ -96,6 +97,9 @@ class MyProfileSettingsState extends State<MyProfileSettingsScreen> {
             child: TextField(
               controller: _bioController,
               decoration: bioInputDecoration,
+              style: const TextStyle(
+                color: Color.fromRGBO(255, 255, 255, 1),
+              )
             ),
           ),
         ],

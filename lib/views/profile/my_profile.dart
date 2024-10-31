@@ -20,8 +20,13 @@ class MyProfileScreenState extends State<MyProfileScreen> {
   late UserInformation userInformation = UserInformation(FirebaseAuth.instance.currentUser!.uid);
 
 
-  void _editProfileButton() {
-    navigatorKey.currentState?.pushNamed(RouteNames.myProfileSettingsRoute);
+  void _editProfileButton() async {  
+    await navigatorKey.currentState?.pushNamed(RouteNames.myProfileSettingsRoute);
+
+  // Refresh the data in profilePicture, Bio, and username fields
+    setState(() {
+    userInformation = UserInformation(FirebaseAuth.instance.currentUser!.uid);
+    });
   }
 
   @override
