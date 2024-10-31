@@ -33,7 +33,7 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
   void _asyncInit() async {
     DocumentSnapshot snap = await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).collection("OpenConversations").doc(widget.recieverUserId).get();
     newConversation = !snap.exists;
-    log(newConversation.toString());
+    log(newConversation ? 'true': 'false');
 
 
     if (!newConversation) {
@@ -47,25 +47,27 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
         });
       });
     }
+    else {
+      messageLogReference ??= await FirebaseFirestore.instance.collection("MessageLogs").add(
+          {
+            "Messages": [
+            ]
+          }
+      );
+      await FirebaseFirestore.instance.collection("Conversations/${sender!.uid}/OpenConversations").doc(widget.recieverUserId).set(
+        {
+          "MessageLog": messageLogReference!.id
+        },
+      );
+      await FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).set(
+        {
+          "MessageLog": messageLogReference!.id
+        },
+      );
+    }
     
-    messageLogReference ??= await FirebaseFirestore.instance.collection("MessageLogs").add(
-        {
-          "Messages": [
-          ]
-        }
-    );
-    await FirebaseFirestore.instance.collection("Conversations/${sender!.uid}/OpenConversations").doc(widget.recieverUserId).set(
-        {
-          "MessageLog": messageLogReference!.id
-        },
-        SetOptions(merge: true)
-    );
-    await FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).set(
-        {
-          "MessageLog": messageLogReference!.id
-        },
-        SetOptions(merge: true)
-    );
+
+
   }
 
   @override
