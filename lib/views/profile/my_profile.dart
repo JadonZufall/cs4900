@@ -150,17 +150,34 @@ class MyProfileScreenState extends State<MyProfileScreen> {
         }
       }
     );
-
-    FutureBuilder<int> followingCount = FutureBuilder<int>(
-      future: userInformation.getFollowing().then((following) => following.length),
+    StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection('Users').doc(userInformation.uid).snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return _buildStatColumn("Following", snapshot.data?.toString() ?? "0");
-        } else {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildStatColumn("Following", "?");
+        } else if (snapshot.hasError) {
+          return _buildStatColumn("Following", "Error");
+        } else if (snapshot.hasData) {
+          // Safely cast the data to a Map<String, dynamic>
+          var userData = snapshot.data!.data() as Map<String, dynamic>;
+          var following = userData['following'] ?? [];
+          return _buildStatColumn("Following", (following.length).toString());
+        } else {
+          return _buildStatColumn("Following", "0");
         }
-      }
+      },
     );
+
+    // FutureBuilder<int> followingCount = FutureBuilder<int>(
+    //   future: userInformation.getFollowing().then((following) => following.length),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.done) {
+    //       return _buildStatColumn("Following", snapshot.data?.toString() ?? "0");
+    //     } else {
+    //       return _buildStatColumn("Following", "?");
+    //     }
+    //   }
+    // );
 
     Column body = Column(
       children: [
@@ -186,8 +203,43 @@ class MyProfileScreenState extends State<MyProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         uploadCount,
-                        followerCount,
-                        followingCount,
+                        
+                        
+                        StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance.collection('Users').doc(userInformation.uid).snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return _buildStatColumn("Followers", "?");
+                            } else if (snapshot.hasError) {
+                              return _buildStatColumn("Followers", "Error");
+                            } else if (snapshot.hasData) {
+                              // Safely cast the data to a Map<String, dynamic>
+                              var userData = snapshot.data!.data() as Map<String, dynamic>;
+                              var followers = userData['followers'] ?? [];
+                              return _buildStatColumn("Followers", (followers.length).toString());
+                            } else {
+                              return _buildStatColumn("Followers", "0");
+                            }
+                          },
+                        ),
+                        
+                        StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance.collection('Users').doc(userInformation.uid).snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return _buildStatColumn("Following", "?");
+                            } else if (snapshot.hasError) {
+                              return _buildStatColumn("Following", "Error");
+                            } else if (snapshot.hasData) {
+                              // Safely cast the data to a Map<String, dynamic>
+                              var userData = snapshot.data!.data() as Map<String, dynamic>;
+                              var following = userData['following'] ?? [];
+                              return _buildStatColumn("Following", (following.length).toString());
+                            } else {
+                              return _buildStatColumn("Following", "0");
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ],

@@ -7,6 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:cs4900/main.dart';
 import 'package:cs4900/models/user.dart';
+import 'package:path/path.dart';
+import 'package:cs4900/components/follow_button.dart';
 
 class PublicProfileScreen extends StatefulWidget {  
   final String userId; // Accept userId to load the profile
@@ -18,18 +20,70 @@ class PublicProfileScreen extends StatefulWidget {
 }
 
 class PublicProfileScreenState extends State<PublicProfileScreen> {
-  late UserInformation userInformation;
+  late UserInformation profileUserInformation;
+  late UserInformation currentUserInformation = UserInformation(FirebaseAuth.instance.currentUser!.uid);
+  final FirebaseFirestore db = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
-    userInformation = UserInformation(widget.userId);
+    profileUserInformation = UserInformation(widget.userId);
   }
 
   @override
   void dispose() {
 
     super.dispose();
+  }
+
+  Future<bool> _isFollowing() async {
+    if (FirebaseAuth.instance.currentUser?.uid == null) {
+      log("Not authorized.");
+      return false;
+    }
+
+    // var imageSnapshot = await db.collection("Images").doc(imageId).get();
+    // String authorId = imageSnapshot.get("author");
+
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+    var userSnapshot = await db.collection("Users").doc(uid).get();
+    if (!userSnapshot.data()!.keys.contains("following")) {
+      log("Usersnapshot does not contains followers, so must not be following.");
+      return false;
+    }
+    List<dynamic> userFollowing = userSnapshot.get("following");
+    if (userFollowing.contains(profileUserInformation.uid)) {
+      return true;
+    }
+    return false;
+  }
+
+  void _followButton() async
+  {
+    // Reference to Firestore
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Reference to the users collection
+    final CollectionReference usersCollection = firestore.collection('Users');
+
+    // Update the following array for the current user
+    await usersCollection.doc(currentUserInformation.uid).update({
+      'following': FieldValue.arrayUnion([profileUserInformation.uid]),
+    }).catchError((error) {
+      log("Failed to follow user: $error");
+    });
+
+    // Update the followers array for the target user
+    await usersCollection.doc(profileUserInformation.uid).update({
+      'followers': FieldValue.arrayUnion([currentUserInformation.uid]),
+    }).catchError((error) {
+      log("Failed to add follower: $error");
+    });
+  }
+
+  void _messageButton()
+  {
+
   }
 
   @override
@@ -53,7 +107,7 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
     Center loadingIndicator = const Center(child: CircularProgressIndicator());
 
     FutureBuilder<String> usernameField = FutureBuilder<String>(
-        future: userInformation.getUsername(),
+        future: profileUserInformation.getUsername(),
         builder: (context, snapshot) {
           log("Future data = ${snapshot.data}");
           log("${snapshot.connectionState}");
@@ -63,7 +117,7 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
           else { return loadingIndicator; }
     });
     FutureBuilder<String?> bioField = FutureBuilder<String?>(
-      future: userInformation.getBio(),
+      future: profileUserInformation.getBio(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           // Check if snapshot.data is null
@@ -78,7 +132,7 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
       },
     );
     FutureBuilder<String> profilePictureField = FutureBuilder<String>(
-      future: userInformation.getProfilePicture(),
+      future: profileUserInformation.getProfilePicture(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return CircleAvatar(
@@ -92,7 +146,7 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
       }
     );
     FutureBuilder<List<Map<String, dynamic>>> uploadedPicturesField = FutureBuilder<List<Map<String, dynamic>>> (
-      future: userInformation.getUploadedImages(),
+      future: profileUserInformation.getUploadedImages(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           List<Image> images = [];
@@ -132,7 +186,7 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
 
 
     FutureBuilder<String> uploadCount = FutureBuilder<String>(
-      future: userInformation.getUploadCount(),
+      future: profileUserInformation.getUploadCount(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return _buildStatColumn("Posts", snapshot.data ?? "?");
@@ -144,7 +198,7 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
     );
 
     FutureBuilder<int> followerCount = FutureBuilder<int>(
-      future: userInformation.getFollowers().then((followers) => followers.length),
+      future: profileUserInformation.getFollowers().then((followers) => followers.length),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return _buildStatColumn("Followers", snapshot.data?.toString() ?? "0");
@@ -155,7 +209,7 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
     );
 
     FutureBuilder<int> followingCount = FutureBuilder<int>(
-      future: userInformation.getFollowing().then((following) => following.length),
+      future: profileUserInformation.getFollowing().then((following) => following.length),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return _buildStatColumn("Following", snapshot.data?.toString() ?? "0");
@@ -163,6 +217,17 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
           return _buildStatColumn("Following", "?");
         }
       }
+    );
+
+    var followButton = FutureBuilder<bool>(
+      future: _isFollowing(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          log("Building follow button");
+          return FollowButtonComponent(userUid: profileUserInformation.uid, startFollowing: snapshot.data ?? false);
+        }
+        return loadingIndicator;
+      },
     );
 
     Column body = Column(
@@ -189,8 +254,43 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         uploadCount,
-                        followerCount,
-                        followingCount,
+                        
+                        
+                        StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance.collection('Users').doc(profileUserInformation.uid).snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return _buildStatColumn("Followers", "?");
+                            } else if (snapshot.hasError) {
+                              return _buildStatColumn("Followers", "Error");
+                            } else if (snapshot.hasData) {
+                              // Safely cast the data to a Map<String, dynamic>
+                              var userData = snapshot.data!.data() as Map<String, dynamic>;
+                              var followers = userData['followers'] ?? [];
+                              return _buildStatColumn("Followers", (followers.length).toString());
+                            } else {
+                              return _buildStatColumn("Followers", "0");
+                            }
+                          },
+                        ),
+                        
+                        StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance.collection('Users').doc(profileUserInformation.uid).snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return _buildStatColumn("Following", "?");
+                            } else if (snapshot.hasError) {
+                              return _buildStatColumn("Following", "Error");
+                            } else if (snapshot.hasData) {
+                              // Safely cast the data to a Map<String, dynamic>
+                              var userData = snapshot.data!.data() as Map<String, dynamic>;
+                              var following = userData['following'] ?? [];
+                              return _buildStatColumn("Following", (following.length).toString());
+                            } else {
+                              return _buildStatColumn("Following", "0");
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ],
@@ -199,6 +299,29 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
             ],
           ),
         ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // ElevatedButton(
+            //   onPressed: _followButton,
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
+            //     minimumSize: const Size(120, 48), // Set the minimum size
+            //   ),
+            //   child: const Text("Follow", style: TextStyle(color: Colors.white)),
+            // ),
+            followButton,
+            ElevatedButton(
+              onPressed: _messageButton,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
+                minimumSize: const Size(120, 48), // Set the minimum size
+              ),
+              child: const Text("Message", style: TextStyle(color: Colors.white))
+            ),
+          ],
+        ),
+        const SizedBox(height: 32.0),
         uploadedPicturesField,
       ],
     );
