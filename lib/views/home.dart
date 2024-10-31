@@ -39,7 +39,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _directMessageButton() {
-    navigatorKey.currentState?.pushNamed(RouteNames.directMessageRoute);
+    navigatorKey.currentState?.pushNamed(RouteNames.inboxScreenRoute);
   }
 
   @override
