@@ -69,7 +69,7 @@ class PhotoDisplayComponent extends StatelessWidget {
       child: Image.network(data["ImageURL"] ?? "", fit: BoxFit.cover)
     );
 
-    LikeButtonComponent likeButton = LikeButtonComponent();
+    LikeButtonComponent likeButton = LikeButtonComponent(imageId: imageId);
 
     IconButton commentButton = IconButton(
       icon: Image.asset(
