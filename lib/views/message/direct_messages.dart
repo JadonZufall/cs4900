@@ -24,14 +24,30 @@ class DirectMessagesScreen extends StatefulWidget {
 class DirectMessagesScreenState extends State<DirectMessagesScreen> {
   late TextEditingController _controller;
   DocumentReference<Map<String, dynamic>>? messageLogReference;
-  List<Map<String, String>> messages = [];
+  List<dynamic> messages = [];
   bool newConversation = true;
   bool sentMessage = false;
 
   User? sender = FirebaseAuth.instance.currentUser!;
 
   void _asyncInit() async {
+    DocumentSnapshot snap = await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).collection("OpenConversations").doc(widget.recieverUserId).get();
+    newConversation = !snap.exists;
+    log(newConversation.toString());
 
+
+    if (!newConversation) {
+      DocumentSnapshot<Map<String, dynamic>>? snapshot = await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).collection("OpenConversations").doc(widget.recieverUserId).get();
+      messageLogReference = await FirebaseFirestore.instance.collection("MessageLogs").doc(snapshot!.get("MessageLog"));
+
+      await messageLogReference!.get().then((DocumentSnapshot docSnap) {
+        setState(() {
+          messages = docSnap.get("Messages");
+          newConversation = newConversation;
+        });
+      });
+    }
+    
     messageLogReference ??= await FirebaseFirestore.instance.collection("MessageLogs").add(
         {
           "Messages": [
@@ -56,10 +72,8 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    if (widget.messageLogReference != null) {
-      messageLogReference = widget.messageLogReference;
-      newConversation = false;
-    }
+    
+
 
     WidgetsBinding.instance.addPostFrameCallback((_){
       _asyncInit();
@@ -67,6 +81,7 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
   }
 
   void dispose() async{
+
     _controller.dispose();
     if (newConversation && !sentMessage) {
       await FirebaseFirestore.instance.collection("MessageLogs").doc(messageLogReference!.id).delete();
@@ -74,6 +89,7 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
       await FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).delete();
     }
     super.dispose();
+
   }
 
   void _sendMessageButton(String value) async {
