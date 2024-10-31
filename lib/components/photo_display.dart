@@ -69,7 +69,8 @@ class PhotoDisplayComponent extends StatelessWidget {
       return false;
     }
 
-    String authorId = "";
+    var imageSnapshot = await db.collection("Images").doc(imageId).get();
+    String authorId = imageSnapshot.get("author");
 
     var uid = FirebaseAuth.instance.currentUser!.uid;
     var userSnapshot = await db.collection("Users").doc(uid).get();
@@ -87,7 +88,7 @@ class PhotoDisplayComponent extends StatelessWidget {
   Widget buildWidget(BuildContext context, Map<String, dynamic> data) {
     log("widget data = ");
     log(data.toString());
-    Center loadingIndicator = const Center(child: CircularProgressIndicator());
+    var loadingIndicator = const CircularProgressIndicator();
 
     var followButton = FutureBuilder<bool>(
       future: _isFollowing(imageId),
