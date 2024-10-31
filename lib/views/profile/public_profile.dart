@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cs4900/main.dart';
 import 'package:cs4900/models/user.dart';
 import 'package:path/path.dart';
+import 'package:cs4900/components/follow_button.dart';
 
 class PublicProfileScreen extends StatefulWidget {  
   final String userId; // Accept userId to load the profile
@@ -21,6 +22,7 @@ class PublicProfileScreen extends StatefulWidget {
 class PublicProfileScreenState extends State<PublicProfileScreen> {
   late UserInformation profileUserInformation;
   late UserInformation currentUserInformation = UserInformation(FirebaseAuth.instance.currentUser!.uid);
+  final FirebaseFirestore db = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -32,6 +34,28 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
   void dispose() {
 
     super.dispose();
+  }
+
+  Future<bool> _isFollowing() async {
+    if (FirebaseAuth.instance.currentUser?.uid == null) {
+      log("Not authorized.");
+      return false;
+    }
+
+    // var imageSnapshot = await db.collection("Images").doc(imageId).get();
+    // String authorId = imageSnapshot.get("author");
+
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+    var userSnapshot = await db.collection("Users").doc(uid).get();
+    if (!userSnapshot.data()!.keys.contains("following")) {
+      log("Usersnapshot does not contains followers, so must not be following.");
+      return false;
+    }
+    List<dynamic> userFollowing = userSnapshot.get("following");
+    if (userFollowing.contains(profileUserInformation.uid)) {
+      return true;
+    }
+    return false;
   }
 
   void _followButton() async
@@ -195,6 +219,17 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
       }
     );
 
+    var followButton = FutureBuilder<bool>(
+      future: _isFollowing(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          log("Building follow button");
+          return FollowButtonComponent(userUid: profileUserInformation.uid, startFollowing: snapshot.data ?? false);
+        }
+        return loadingIndicator;
+      },
+    );
+
     Column body = Column(
       children: [
         Container(
@@ -222,7 +257,7 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
                         
                         
                         StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance.collection('Users').doc(currentUserInformation.uid).snapshots(),
+                          stream: FirebaseFirestore.instance.collection('Users').doc(profileUserInformation.uid).snapshots(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
                               return _buildStatColumn("Followers", "?");
@@ -240,7 +275,7 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
                         ),
                         
                         StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance.collection('Users').doc(currentUserInformation.uid).snapshots(),
+                          stream: FirebaseFirestore.instance.collection('Users').doc(profileUserInformation.uid).snapshots(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
                               return _buildStatColumn("Following", "?");
@@ -267,14 +302,15 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            ElevatedButton(
-              onPressed: _followButton,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
-                minimumSize: const Size(120, 48), // Set the minimum size
-              ),
-              child: const Text("Follow", style: TextStyle(color: Colors.white)),
-            ),
+            // ElevatedButton(
+            //   onPressed: _followButton,
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
+            //     minimumSize: const Size(120, 48), // Set the minimum size
+            //   ),
+            //   child: const Text("Follow", style: TextStyle(color: Colors.white)),
+            // ),
+            followButton,
             ElevatedButton(
               onPressed: _messageButton,
               style: ElevatedButton.styleFrom(
