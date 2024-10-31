@@ -110,14 +110,39 @@ class FollowButtonState extends State<FollowButtonComponent> {
     setState(() {isFollowing = true;});
   }
 
+  Future<bool> _isOwnPost() async {
+    if (FirebaseAuth.instance.currentUser?.uid == null) {
+      log("No authentication");
+      return false;
+    }
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    String authorId = await _getAuthorId();
+    if (uid == authorId) {
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     log("Built");
+    var loadingIndicator = const CircularProgressIndicator();
 
-    return ElevatedButton(
-        onPressed: isFollowing ? _unfollow : _follow,
-        child: Text(isFollowing ? "Unfollow" : "Follow")
-    );
+    var future = FutureBuilder<bool>(future: _isOwnPost(), builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.data == true) {
+          return const Text("");
+        }
+        return ElevatedButton(
+          onPressed: isFollowing ? _unfollow : _follow,
+          child: Text(isFollowing ? "Unfollow" : "Follow")
+        );
+      }
+      return loadingIndicator;
+    });
+    return future;
+
+
   }
 
 }
