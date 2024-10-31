@@ -6,6 +6,7 @@ import 'package:cs4900/models/image.dart';
 import 'package:cs4900/models/user.dart';
 import 'package:cs4900/views/profile/public_profile.dart';
 import 'package:path/path.dart';
+import 'package:cs4900/components/like_button.dart';
 
 class PhotoDisplayComponent extends StatelessWidget {
   final String imageId;
@@ -68,16 +69,7 @@ class PhotoDisplayComponent extends StatelessWidget {
       child: Image.network(data["ImageURL"] ?? "", fit: BoxFit.cover)
     );
 
-    IconButton likeButton = IconButton(
-        icon: const Icon(
-          Icons.favorite_outline,
-          size: 25,
-          color: Colors.white,
-        ),
-        onPressed: () {
-          
-        }
-    );
+    LikeButtonComponent likeButton = LikeButtonComponent();
 
     IconButton commentButton = IconButton(
       icon: Image.asset(
