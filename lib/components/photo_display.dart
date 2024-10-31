@@ -1,13 +1,24 @@
 import 'dart:developer';
 
+import 'package:cs4900/main.dart';
 import 'package:flutter/material.dart';
 import 'package:cs4900/models/image.dart';
 import 'package:cs4900/models/user.dart';
+import 'package:cs4900/views/profile/public_profile.dart';
+import 'package:path/path.dart';
+import 'package:cs4900/components/like_button.dart';
 
 class PhotoDisplayComponent extends StatelessWidget {
   final String imageId;
 
   const PhotoDisplayComponent({super.key, required this.imageId});
+
+  GestureTapCallback generateProfileFunc(BuildContext context, String uid) {
+    void result() {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PublicProfileScreen(userId: uid)));
+    }
+    return result;
+  }
 
   Future<Map<String, dynamic>> buildFutureElements() async {
     ImageInformation imageInfo = ImageInformation(imageId);
@@ -18,6 +29,7 @@ class PhotoDisplayComponent extends StatelessWidget {
     Map<String, dynamic> resultData = <String, dynamic> {
       "ImageID": imageId,
       "ImageURL": imageData!["url"],
+      "AuthorUID": authorInformation.uid,
       "AuthorUsername": await authorInformation.getUsername(),
       "AuthorProfilePicture": await authorInformation.getProfilePicture(),
       "Likes": imageData["likes"].toString(),
@@ -27,7 +39,7 @@ class PhotoDisplayComponent extends StatelessWidget {
     return resultData;
   }
 
-  Widget buildWidget(Map<String, dynamic> data) {
+  Widget buildWidget(BuildContext context, Map<String, dynamic> data) {
     log("widget data = ");
     log(data.toString());
     Center authorInformation = Center(child: ListTile(
@@ -37,9 +49,12 @@ class PhotoDisplayComponent extends StatelessWidget {
             child: Image.network(data["AuthorProfilePicture"] ?? ""),
           ),
         ),
-      title: Text(
-          data["AuthorUsername"] ?? "???",
-          style: const TextStyle(fontSize: 13, color: Colors.white),
+      title: new GestureDetector(
+          onTap: generateProfileFunc(context, data["AuthorUID"]),
+          child: Text(
+            data["AuthorUsername"] ?? "???",
+            style: const TextStyle(fontSize: 13, color: Colors.white),
+          )
       ),
     ),);
 
@@ -54,21 +69,16 @@ class PhotoDisplayComponent extends StatelessWidget {
       child: Image.network(data["ImageURL"] ?? "", fit: BoxFit.cover)
     );
 
-    IconButton likeButton = IconButton(
-        icon: const Icon(
-          Icons.favorite_outline,
-          size: 25,
-          color: Colors.white,
-        ),
-        onPressed: () {}
-    );
+    LikeButtonComponent likeButton = LikeButtonComponent();
 
     IconButton commentButton = IconButton(
       icon: Image.asset(
         'assets/images/comment.webp',
         height: 28,
       ),
-      onPressed: () {}
+      onPressed: () {
+
+      }
     );
 
     IconButton shareButton = IconButton(
@@ -125,10 +135,11 @@ class PhotoDisplayComponent extends StatelessWidget {
             log("Error snapshot data is null");
             return loadingState;
           }
-          return buildWidget(snapshot.data!);
+          return buildWidget(context, snapshot.data!);
         }
         else { return loadingState; }
-      });
+      },
+    );
 
     return Container(
       child: builder,
