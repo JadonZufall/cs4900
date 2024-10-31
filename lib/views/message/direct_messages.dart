@@ -25,7 +25,7 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
   late TextEditingController _controller;
   DocumentReference<Map<String, dynamic>>? messageLogReference;
   List<dynamic> messages = [];
-  bool newConversation = true;
+  bool newConversation = false;
   bool sentMessage = false;
 
   User? sender = FirebaseAuth.instance.currentUser!;
