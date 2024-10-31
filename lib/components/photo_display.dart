@@ -8,6 +8,10 @@ import 'package:cs4900/views/profile/public_profile.dart';
 import 'package:path/path.dart';
 import 'package:cs4900/components/like_button.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+final FirebaseFirestore db = FirebaseFirestore.instance;
+
 class PhotoDisplayComponent extends StatelessWidget {
   final String imageId;
 
@@ -37,6 +41,25 @@ class PhotoDisplayComponent extends StatelessWidget {
     };
     log("Result data = " + resultData.toString());
     return resultData;
+  }
+
+  Future<bool> _getStartLiked() async {
+    if (FirebaseAuth.instance.currentUser?.uid == null) {
+      log("Not authorized.");
+      return false;
+    }
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+    var userSnapshot = await db.collection("Users").doc(uid).get();
+
+    if (!userSnapshot.data()!.keys.contains("likes")) {
+      log("Usersnapshot does not contains likes so image is not liked.");
+      return false;
+    }
+    List<dynamic> userLikes = userSnapshot.get("likes");
+    log("Fetching likes");
+    bool result = userLikes.contains(imageId);
+    log(result? "true":"false");
+    return result;
   }
 
   Widget buildWidget(BuildContext context, Map<String, dynamic> data) {
@@ -69,7 +92,21 @@ class PhotoDisplayComponent extends StatelessWidget {
       child: Image.network(data["ImageURL"] ?? "", fit: BoxFit.cover)
     );
 
-    LikeButtonComponent likeButton = LikeButtonComponent(imageId: imageId);
+    FutureBuilder<bool> likeButton = FutureBuilder<bool>(
+      future: _getStartLiked(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return LikeButtonComponent(imageId: imageId, startLiked: snapshot.data ?? false);
+        }
+        else {
+          return const Icon(
+              Icons.favorite_outline,
+              size: 25,
+              color: Colors.grey,
+          );
+        }
+      }
+    );
 
     IconButton commentButton = IconButton(
       icon: Image.asset(
