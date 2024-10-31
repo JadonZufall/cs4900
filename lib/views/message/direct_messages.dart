@@ -38,13 +38,13 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
     _controller = TextEditingController();
   }
 
-  void dispose() async{
+  void dispose() {
 
     _controller.dispose();
     if (newConversation && !sentMessage) {
-      await FirebaseFirestore.instance.collection("MessageLogs").doc(messageLogReference!.id).delete();
-      await FirebaseFirestore.instance.collection("Conversations/${sender!.uid}/OpenConversations").doc(widget.recieverUserId).delete();
-      await FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).delete();
+      FirebaseFirestore.instance.collection("MessageLogs").doc(messageLogReference!.id).delete();
+      FirebaseFirestore.instance.collection("Conversations/${sender!.uid}/OpenConversations").doc(widget.recieverUserId).delete();
+      FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).delete();
     }
     super.dispose();
 
@@ -79,6 +79,21 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
         },
         SetOptions(merge: true)
     );
+    if (newConversation) {
+      await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).set(
+          {
+            "newConversations": FieldValue.arrayUnion([widget.recieverUserId])
+          },
+          SetOptions(merge: true)
+      );
+      await FirebaseFirestore.instance.collection("Conversations").doc(widget.recieverUserId).set(
+          {
+            "newConversations": FieldValue.arrayUnion([sender!.uid])
+          },
+          SetOptions(merge: true)
+      );
+    }
+
   }
 
   Future<Map<String, dynamic>> buildInfo() async {
@@ -101,12 +116,12 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
             ]
           }
       );
-      await FirebaseFirestore.instance.collection("Conversations/${sender!.uid}/OpenConversations").doc(widget.recieverUserId).set(
+      FirebaseFirestore.instance.collection("Conversations/${sender!.uid}/OpenConversations").doc(widget.recieverUserId).set(
         {
           "MessageLog": messageLogReference!.id
         },
       );
-      await FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).set(
+      FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).set(
         {
           "MessageLog": messageLogReference!.id
         },

@@ -54,31 +54,53 @@ class InboxScreenState extends State<InboxScreen> {
     });
   }
 
-  Future<List<Map<String, dynamic>>> reloadConversations() async {
+  Future<List<String>> reloadConversations() async {
+    await FirebaseFirestore.instance.collection("Conversations").doc(user?.uid).set(
+        {"newConversations" : []}
+    );
     return await updateConversations();
   }
 
-  Future<List<Map<String, dynamic>>> updateConversations() async {
-    List<Map<String, dynamic>> conversations = [];
+  Future<List<String>> updateConversations() async {
+    List<String> conversations = [];
 
     var querySnapshot = await FirebaseFirestore.instance.collection("Conversations/${user!.uid}/OpenConversations").get();
     for(var docSnapshot in querySnapshot.docs) {
       UserInformation recipient = new UserInformation(docSnapshot.id);
 
-      conversations.add({
-        "lastMessage": docSnapshot.get("lastMessage"),
-        "timeStamp": docSnapshot.get("timeStamp"),
-        "recipientPfp": Image.network(await recipient.getProfilePicture()),
-        "recipientName": await recipient.getUsername(),
-        "recipientUid": recipient.uid
-      });
+      conversations.add(recipient.uid);
     }
     return conversations;
   }
 
 
+  Widget activeInboxStreamBuilder(List<String> conversations) {
+    Widget loadingState = const Center(child: CircularProgressIndicator());
 
-  Widget buildActiveInboxes(List<Map<String, dynamic>> conversations) {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection("Conversations").doc(user!.uid).snapshots(),
+      builder: ((context, snapshot){
+        if (snapshot.hasError) {
+          log("Error in message screen stream builder");
+          return Text("Error");
+        }
+        else if (snapshot.connectionState == ConnectionState.waiting) {
+          return buildActiveInboxes(conversations);
+        }
+        else if (snapshot.hasData) {
+          var conversationSet = conversations.toSet();
+
+          for (String newCovno in snapshot.data!.get("newConversations")) {
+            conversationSet.add(newCovno);
+          }
+          conversations = conversationSet.toList();
+        }
+        return buildActiveInboxes(conversations);
+      })
+    );
+  }
+
+  Widget buildActiveInboxes(List<String> conversations) {
     return Expanded(
       child: Container(
           child: CustomScrollView(
@@ -86,10 +108,7 @@ class InboxScreenState extends State<InboxScreen> {
               SliverList(
                 delegate: SliverChildBuilderDelegate((context,index) {
                   return InboxBlob(
-                      recipientUserName: conversations[index]["recipientName"],
-                      recipientPfp: conversations[index]["recipientPfp"],
-                      recipientUid: conversations[index]["recipientUid"],
-                      lastMessage: conversations[index]["lastMessage"],
+                      recipientUid: conversations[index],
                   );
                 },
                 childCount: conversations.length),
@@ -101,7 +120,7 @@ class InboxScreenState extends State<InboxScreen> {
     );
   }
 
-  Widget buildWidget(List<Map<String, dynamic>> conversations) {
+  Widget buildWidget(List<String> conversations) {
     return Column(
         children: [
           Padding(
@@ -128,7 +147,7 @@ class InboxScreenState extends State<InboxScreen> {
                 child: Container( constraints: BoxConstraints(minHeight: 300), child: SearchHelpers.get(searchText, _focusNode, RouteNames.directMessageRoute))
             ),
           Text("Existing Conversations", style: TextStyle(color: Colors.white, fontSize: 16)),
-          buildActiveInboxes(conversations)
+          activeInboxStreamBuilder(conversations)
         ]
     );
   }
@@ -137,7 +156,7 @@ class InboxScreenState extends State<InboxScreen> {
   Widget build(BuildContext context) {
     Widget loadingState = const Center(child: CircularProgressIndicator());
 
-    FutureBuilder<List<Map<String, dynamic>>> builder = FutureBuilder<List<Map<String, dynamic>>> (
+    FutureBuilder<List<String>> builder = FutureBuilder<List<String>> (
         future: _future,
         builder: ( context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
