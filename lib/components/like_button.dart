@@ -20,8 +20,8 @@ class LikeButtonState extends State<LikeButtonComponent> {
       return;
     }
     String uid = FirebaseAuth.instance.currentUser!.uid;
-    await db.collection("Users").doc(uid).collection("Likes").add({widget.imageId: true});
-    await db.collection("Images").doc(uid).collection("Likes").add({uid: true});
+    await db.collection("Users").doc(uid).collection("data").doc("likes").update({widget.imageId: true});
+    await db.collection("Images").doc(uid).collection("data").doc("likes").update({uid: true});
   }
 
   Future<void> _unlikeImage() async {
@@ -29,8 +29,8 @@ class LikeButtonState extends State<LikeButtonComponent> {
       return;
     }
     String uid = FirebaseAuth.instance.currentUser!.uid;
-    await db.collection("Users").doc(uid).collection("Likes").doc(widget.imageId).delete();
-    await db.collection("Images").doc(uid).collection("Likes").doc(uid).delete();
+    await db.collection("Users").doc(uid).collection("data").doc("likes").update({widget.imageId: null});
+    await db.collection("Images").doc(uid).collection("data").doc("likes").update({uid: null});
   }
 
   void _onPressed() async {
