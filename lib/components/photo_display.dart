@@ -78,8 +78,8 @@ class PhotoDisplayComponent extends StatelessWidget {
       log("Usersnapshot does not contains followers, so must not be following.");
       return false;
     }
-    List<dynamic> userLikes = userSnapshot.get("following");
-    if (userLikes.contains(authorId)) {
+    List<dynamic> userFollowing = userSnapshot.get("following");
+    if (userFollowing.contains(authorId)) {
       return true;
     }
     return false;
