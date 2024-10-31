@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:cs4900/main.dart';
-import 'package:cs4900/views/search/search.dart';
+import 'package:cs4900/util/search_util.dart';
 
 class InboxScreen extends StatefulWidget {
   const InboxScreen({super.key});
@@ -75,7 +75,11 @@ class InboxScreenState extends State<InboxScreen> {
           if (_focusNode.hasFocus || searchText.isNotEmpty)
             Expanded(
                 child: SearchHelpers.get(searchText, _focusNode, RouteNames.directMessageRoute)
-            )
+            ),
+          SizedBox(
+            height: 100,
+            child: Text("Open Messages", style: TextStyle(fontSize: 16, color: Colors.white),)
+          )
         ]
       ),
     );
