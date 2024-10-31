@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cs4900/components/follow_button.dart';
 import 'package:cs4900/main.dart';
 import 'package:flutter/material.dart';
 import 'package:cs4900/models/image.dart';
@@ -62,24 +63,60 @@ class PhotoDisplayComponent extends StatelessWidget {
     return result;
   }
 
+  Future<bool> _isFollowing(String imageId) async {
+    if (FirebaseAuth.instance.currentUser?.uid == null) {
+      log("Not authorized.");
+      return false;
+    }
+
+    String authorId = "";
+
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+    var userSnapshot = await db.collection("Users").doc(uid).get();
+    if (!userSnapshot.data()!.keys.contains("following")) {
+      log("Usersnapshot does not contains followers, so must not be following.");
+      return false;
+    }
+    List<dynamic> userLikes = userSnapshot.get("following");
+    if (userLikes.contains(authorId)) {
+      return true;
+    }
+    return false;
+  }
+
   Widget buildWidget(BuildContext context, Map<String, dynamic> data) {
     log("widget data = ");
     log(data.toString());
-    Center authorInformation = Center(child: ListTile(
+    Center loadingIndicator = const Center(child: CircularProgressIndicator());
+
+    var followButton = FutureBuilder<bool>(
+      future: _isFollowing(imageId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return FollowButtonComponent(imageId: imageId, startFollowing: snapshot.data ?? false);
+        }
+        return loadingIndicator;
+      },
+    );
+
+    Center authorInformation =
+      Center(child: ListTile(
         leading: ClipOval(
           child: SizedBox(
             width: 35, height: 35,
             child: Image.network(data["AuthorProfilePicture"] ?? ""),
           ),
         ),
-      title: new GestureDetector(
-          onTap: generateProfileFunc(context, data["AuthorUID"]),
-          child: Text(
-            data["AuthorUsername"] ?? "???",
-            style: const TextStyle(fontSize: 13, color: Colors.white),
-          )
+        title: new GestureDetector(
+            onTap: generateProfileFunc(context, data["AuthorUID"]),
+            child: Text(
+              data["AuthorUsername"] ?? "???",
+              style: const TextStyle(fontSize: 13, color: Colors.white),
+            )
+        ),
+        trailing: followButton,
       ),
-    ),);
+    );
 
     Container top = Container(
       width: 375, height: 54,
