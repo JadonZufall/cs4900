@@ -65,9 +65,6 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
         },
       );
     }
-    
-
-
   }
 
   @override
@@ -99,6 +96,7 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
     _controller.clear();
 
     var message = {
+      "MessageId": sender!.uid + "${messages.length}",
       "user": sender!.uid,
       "Message": value
     };
@@ -208,11 +206,12 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
           child: CustomScrollView( slivers: [
             SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-                return MessageBlob(currentUser: sender!.uid, messageSender: messages[index]["user"], senderProfilePicture: senderPfp, messageContents: messages[index]["Message"]);
+                return MessageBlob(currentUser: sender!.uid, messageSender: messages[messages.length - index - 1]["user"], senderProfilePicture: senderPfp, messageContents: messages[messages.length - index - 1]["Message"]);
               },
               childCount: messages.length),
             )
-          ],)
+          ],
+          reverse: true,)
         )
       )
     );
