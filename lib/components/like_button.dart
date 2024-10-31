@@ -1,10 +1,12 @@
 import 'dart:developer';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+final FirebaseFirestore db = FirebaseFirestore.instance;
 
 class LikeButtonComponent extends StatefulWidget {
-  const LikeButtonComponent({super.key});
+  final String imageId;
+  const LikeButtonComponent({super.key, required this.imageId});
 
   @override
   LikeButtonState createState() => LikeButtonState();
@@ -13,9 +15,34 @@ class LikeButtonComponent extends StatefulWidget {
 class LikeButtonState extends State<LikeButtonComponent> {
   bool isLiked = false;
 
-  void _onPressed() {
+  Future<void> _likeImage() async {
+    if (FirebaseAuth.instance.currentUser?.uid == null) {
+      return;
+    }
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    await db.collection("Users").doc(uid).collection("Likes").add({widget.imageId: true});
+    await db.collection("Images").doc(uid).collection("Likes").add({uid: true});
+  }
+
+  Future<void> _unlikeImage() async {
+    if (FirebaseAuth.instance.currentUser?.uid == null) {
+      return;
+    }
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    await db.collection("Users").doc(uid).collection("Likes").doc(widget.imageId).delete();
+    await db.collection("Images").doc(uid).collection("Likes").doc(uid).delete();
+  }
+
+  void _onPressed() async {
     log("Like button pressed");
+    if (isLiked) {
+      await _unlikeImage();
+    }
+    else {
+      await _likeImage();
+    }
     setState(() {isLiked = !isLiked;});
+
   }
 
   @override
