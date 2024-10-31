@@ -31,10 +31,10 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
   User? sender = FirebaseAuth.instance.currentUser!;
 
   void _asyncInit() async {
-    await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).collection("OpenConversations").doc(widget.recieverUserId).get().then((DocumentSnapshot docSnap){
-      newConversation = !docSnap.exists;
-      print(newConversation);
-    });
+    DocumentSnapshot snap = await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).collection("OpenConversations").doc(widget.recieverUserId).get();
+    newConversation = !snap.exists;
+    log(newConversation.toString());
+
 
     if (!newConversation) {
       DocumentSnapshot<Map<String, dynamic>>? snapshot = await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).collection("OpenConversations").doc(widget.recieverUserId).get();
@@ -43,6 +43,7 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
       await messageLogReference!.get().then((DocumentSnapshot docSnap) {
         setState(() {
           messages = docSnap.get("Messages");
+          newConversation = newConversation;
         });
       });
     }
@@ -80,6 +81,7 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
   }
 
   void dispose() async{
+
     _controller.dispose();
     if (newConversation && !sentMessage) {
       await FirebaseFirestore.instance.collection("MessageLogs").doc(messageLogReference!.id).delete();
@@ -87,6 +89,7 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
       await FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).delete();
     }
     super.dispose();
+
   }
 
   void _sendMessageButton(String value) async {
