@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:ffi';
 
+import 'package:cs4900/views/message/single_message.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,7 +30,8 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
 
   User? sender = FirebaseAuth.instance.currentUser!;
 
-  void _asyncInit() async{
+  void _asyncInit() async {
+
     messageLogReference ??= await FirebaseFirestore.instance.collection("MessageLogs").add(
         {
           "Messages": [
@@ -91,11 +93,14 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
     });
   }
 
-  Future<Map<String, dynamic>> buildRecipientInfo() async {
+  Future<Map<String, dynamic>> buildInfo() async {
     UserInformation recipient = new UserInformation(widget.recieverUserId);
+    UserInformation senderInformation = new UserInformation(sender!.uid);
+
     return <String, dynamic> {
-      "Username": await recipient.getUsername(),
-      "ProfilePicture": await recipient.getProfilePicture(),
+      "recieverUsername": await recipient.getUsername(),
+      "recieverPfp": Image.network(await recipient.getProfilePicture()),
+      "senderPfp": Image.network(await senderInformation.getProfilePicture()),
     };
   }
 
@@ -104,11 +109,11 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
       leading: ClipOval(
         child: SizedBox(
           width: 35, height: 35,
-          child: Image.network(recipientData["ProfilePicture"] ?? ""),
+          child: recipientData["recieverPfp"] ?? "",
         )
       ),
       title: Text(
-        recipientData["Username"] ?? "???",
+        recipientData["recieverUsername"] ?? "???",
         style: const TextStyle(fontSize:13, color: Colors.white),
       ),
     ),);
@@ -121,7 +126,9 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
 
     return Column(
       children: [
-        top
+        top,
+        buildMessageScreen(recipientData["senderPfp"]),
+        buildMessageBar()
       ],
     );
   }
@@ -174,12 +181,20 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
     );
   }
 
-  Widget buildMessageScreen() {
+  Widget buildMessageScreen(Image senderPfp) {
     return Expanded(
       child: Container (
         padding: EdgeInsets.only(left: 10, right: 10),
         child: Container(
-          color: AppColors.darken(AppColors.backgroundColor),
+          color: AppColors.darken(AppColors.backgroundColor, 0.05),
+          child: CustomScrollView( slivers: [
+            SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                return MessageBlob(currentUser: sender!.uid, messageSender: messages[index]["user"], senderProfilePicture: senderPfp, messageContents: messages[index]["Message"]);
+              },
+              childCount: messages.length),
+            )
+          ],)
         )
       )
     );
@@ -190,7 +205,7 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
     Widget loadingState = const Center(child: CircularProgressIndicator());
 
     FutureBuilder<Map<String, dynamic>> builder = FutureBuilder<Map<String, dynamic>> (
-        future: buildRecipientInfo(),
+        future: buildInfo(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data == null) {
@@ -211,13 +226,8 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
         backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
         foregroundColor: Colors.white,
       ),
-      body: Column(
-        children: [
-          builder,
-          buildMessageScreen(),
-          buildMessageBar()
-        ],
-      )
+      body:
+        Container(child: builder),
     );
   }
 /*
