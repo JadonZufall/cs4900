@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 import 'package:cs4900/main.dart';
 import 'package:cs4900/models/user.dart';
 import 'package:cs4900/Util/app_colors.dart';
@@ -30,53 +31,11 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
 
   User? sender = FirebaseAuth.instance.currentUser!;
 
-  void _asyncInit() async {
-    DocumentSnapshot snap = await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).collection("OpenConversations").doc(widget.recieverUserId).get();
-    newConversation = !snap.exists;
-    log(newConversation ? 'true': 'false');
-
-
-    if (!newConversation) {
-      DocumentSnapshot<Map<String, dynamic>>? snapshot = await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).collection("OpenConversations").doc(widget.recieverUserId).get();
-      messageLogReference = await FirebaseFirestore.instance.collection("MessageLogs").doc(snapshot!.get("MessageLog"));
-
-      await messageLogReference!.get().then((DocumentSnapshot docSnap) {
-        setState(() {
-          messages = docSnap.get("Messages");
-          newConversation = newConversation;
-        });
-      });
-    }
-    else {
-      messageLogReference ??= await FirebaseFirestore.instance.collection("MessageLogs").add(
-          {
-            "Messages": [
-            ]
-          }
-      );
-      await FirebaseFirestore.instance.collection("Conversations/${sender!.uid}/OpenConversations").doc(widget.recieverUserId).set(
-        {
-          "MessageLog": messageLogReference!.id
-        },
-      );
-      await FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).set(
-        {
-          "MessageLog": messageLogReference!.id
-        },
-      );
-    }
-  }
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    
-
-
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      _asyncInit();
-    });
   }
 
   void dispose() async{
@@ -104,12 +63,40 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
     await FirebaseFirestore.instance.collection("MessageLogs").doc(messageLogReference!.id).update({
       "Messages": FieldValue.arrayUnion([message])
     });
-    setState(() {
-      messages.add(message);
-    });
   }
 
   Future<Map<String, dynamic>> buildInfo() async {
+    DocumentSnapshot snap = await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).collection("OpenConversations").doc(widget.recieverUserId).get();
+    newConversation = !snap.exists;
+    log(newConversation ? 'true': 'false');
+
+
+    if (!newConversation) {
+      DocumentSnapshot<Map<String, dynamic>>? snapshot = await FirebaseFirestore.instance.collection("Conversations").doc(sender!.uid).collection("OpenConversations").doc(widget.recieverUserId).get();
+      messageLogReference = await FirebaseFirestore.instance.collection("MessageLogs").doc(snapshot!.get("MessageLog"));
+      await FirebaseFirestore.instance.collection("MessageLogs").doc(messageLogReference!.id).update({
+        "Messages": FieldValue.arrayUnion([])
+      });
+    }
+    else {
+      messageLogReference ??= await FirebaseFirestore.instance.collection("MessageLogs").add(
+          {
+            "Messages": [
+            ]
+          }
+      );
+      await FirebaseFirestore.instance.collection("Conversations/${sender!.uid}/OpenConversations").doc(widget.recieverUserId).set(
+        {
+          "MessageLog": messageLogReference!.id
+        },
+      );
+      await FirebaseFirestore.instance.collection("Conversations/${widget.recieverUserId}/OpenConversations").doc(sender!.uid).set(
+        {
+          "MessageLog": messageLogReference!.id
+        },
+      );
+    }
+
     UserInformation recipient = new UserInformation(widget.recieverUserId);
     UserInformation senderInformation = new UserInformation(sender!.uid);
 
@@ -143,9 +130,30 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
     return Column(
       children: [
         top,
-        buildMessageScreen(recipientData["senderPfp"]),
+        messageScreenStreamBuilder(recipientData["senderPfp"]),
         buildMessageBar()
       ],
+    );
+  }
+
+  Widget messageScreenStreamBuilder(Image senderPfp) {
+    Widget loadingState = const Center(child: CircularProgressIndicator());
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection("MessageLogs").doc(messageLogReference!.id).snapshots(),
+      builder: ((BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.hasError) {
+          log("Error in message screen stream builder");
+          return buildMessageScreen(senderPfp);
+        }
+        else if (snapshot.connectionState == ConnectionState.waiting) {
+          return buildMessageScreen(senderPfp);
+        }
+
+        messages = snapshot.data!.get("Messages");
+
+        return buildMessageScreen(senderPfp);
+      }),
     );
   }
 
