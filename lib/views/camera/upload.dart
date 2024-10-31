@@ -43,6 +43,10 @@ class UploadScreenState extends State<UploadScreen> {
     String imageURL = await taskSnapshot.ref.getDownloadURL();
     User? localUser = FirebaseAuth.instance.currentUser!;
     await FirebaseFirestore.instance.collection("Users").doc(localUser.uid).update({"profile_picture": imageURL});
+    navigatorKey.currentState?.pop();
+    navigatorKey.currentState?.pop();
+    navigatorKey.currentState?.pop();
+    navigatorKey.currentState?.pop();
     return imageURL;
   }
 
