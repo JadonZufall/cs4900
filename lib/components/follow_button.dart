@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 final FirebaseFirestore db = FirebaseFirestore.instance;
 
 class FollowButtonComponent extends StatefulWidget {
-  final String imageId;
+  final String? imageId; // Optional Image ID
+  final String? userUid; // Optional User UID
   final bool startFollowing;
-  const FollowButtonComponent({super.key, required this.imageId, required this.startFollowing});
+  const FollowButtonComponent({super.key, this.imageId, required this.startFollowing, this.userUid});
 
   @override
   FollowButtonState createState() => FollowButtonState();
@@ -23,6 +24,10 @@ class FollowButtonState extends State<FollowButtonComponent> {
   }
 
   Future<String> _getAuthorId() async {
+    if (widget.userUid != null) {
+      // Use provided userUid directly
+      return widget.userUid!;
+    }
     var snapshot = await db.collection("Images").doc(widget.imageId).get();
     String authorUid = snapshot.get("author");
     return authorUid;
