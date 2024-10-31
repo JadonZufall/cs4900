@@ -1,11 +1,25 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:cs4900/components/photo_display.dart';
+
+
 
 class FeedScreen extends StatelessWidget {
   FeedScreen({super.key});
 
+  Future<String> _getNextImage(var index) async {
+    var collection = await db.collection("Images").get();
+    log(index.toString());
+    var snapshot = collection.docs.asMap();
+    return snapshot[index]?.id ?? "";
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget loadingState = const SizedBox(width: 375, height: 429, child: Center(child: CircularProgressIndicator()));
+
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
       appBar: AppBar(
@@ -16,9 +30,28 @@ class FeedScreen extends StatelessWidget {
       // CREATES A SCROLL VIEW, MODIFY NUMBER OF POSTS BY USING THE CHILD COUNT, WILL NEED TO BE POPULATED WITH INFORMATION FROM FIREBASE
       body: CustomScrollView(slivers: [
         SliverList(
+
           delegate: SliverChildBuilderDelegate(
+
             (context, index) {
-              return PhotoDisplayComponent(imageId: "82A3VxxdmtkhGoOpq0PQ");
+
+              var item = FutureBuilder<String>(
+                  future: _getNextImage(index),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.data == "") {
+                        return PhotoDisplayComponent(imageId: "yutLqlrqQxfc2QTtf5rZ");
+                      }
+                      return PhotoDisplayComponent(imageId: snapshot.data as String);
+                    }
+                    return loadingState;
+
+                  }
+              );
+
+
+              // return PhotoDisplayComponent(imageId: "82A3VxxdmtkhGoOpq0PQ");
+              return item;
               /*return Column(
                 children: [
                   Container(
