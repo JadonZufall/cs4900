@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:cs4900/views/message/direct_messages.dart';
 import 'package:cs4900/views/message/inbox.dart';
+import 'package:cs4900/views/profile/profile_following.dart';
+import 'package:cs4900/views/profile/profile_followers.dart';
 import 'package:cs4900/views/upload_type.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -21,6 +23,7 @@ import 'package:cs4900/views/profile/public_profile.dart';
 import 'package:cs4900/views/profile_setup.dart';
 import 'package:cs4900/views/camera/photo.dart';
 import 'package:cs4900/views/profile/my_profile_settings.dart';
+import 'package:cs4900/views/profile/profile_followers.dart';
 import 'package:cs4900/views/search/search.dart';
 import 'package:cs4900/views/camera/upload.dart';
 
@@ -42,6 +45,8 @@ class RouteNames {
   static const String publicProfileRoute = '/publicProfile';
   static const String directMessageRoute = '/direct_message';
   static const String inboxScreenRoute = '/inbox';
+  static const String followingRoute = 'following';
+  static const String followersRoute = 'followers';
 }
 
 class Router {
@@ -59,6 +64,16 @@ class Router {
         final args = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
           builder: (_) => PublicProfileScreen(userId: args['userId']!),
+        );
+      case RouteNames.followersRoute:
+        final args = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+          builder: (_) => FollowersPage(userId: args['userId']!),
+        );
+      case RouteNames.followingRoute:
+        final args = settings.arguments as Map<String, String>;
+        return MaterialPageRoute(
+          builder: (_) => FollowingPage(userId: args['userId']!),
         );
       case RouteNames.myProfileScreenRoute:
         return MaterialPageRoute(builder: (_) {
@@ -108,12 +123,15 @@ void main() async {
   runApp(MyApp());
 }
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     MaterialApp app = new MaterialApp(
+      navigatorObservers: [routeObserver],
       title: "Instagram Clone",
       initialRoute: "",
       theme: ThemeData(

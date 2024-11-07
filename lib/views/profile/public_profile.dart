@@ -256,40 +256,57 @@ class PublicProfileScreenState extends State<PublicProfileScreen> {
                         uploadCount,
                         
                         
-                        StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance.collection('Users').doc(profileUserInformation.uid).snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return _buildStatColumn("Followers", "?");
-                            } else if (snapshot.hasError) {
-                              return _buildStatColumn("Followers", "Error");
-                            } else if (snapshot.hasData) {
-                              // Safely cast the data to a Map<String, dynamic>
-                              var userData = snapshot.data!.data() as Map<String, dynamic>;
-                              var followers = userData['followers'] ?? [];
-                              return _buildStatColumn("Followers", (followers.length).toString());
-                            } else {
-                              return _buildStatColumn("Followers", "0");
-                            }
+                        GestureDetector(
+                          onTap: () {
+                            // Your callback code here
+                            log("Followers clicked");
+                            Navigator.pushNamed(context, RouteNames.followersRoute, arguments: {'userId': profileUserInformation.uid});  
+                            
+                            // You can navigate to another screen or perform other actions
                           },
+                          child: StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance.collection('Users').doc(profileUserInformation.uid).snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return _buildStatColumn("Followers", "?");
+                              } else if (snapshot.hasError) {
+                                return _buildStatColumn("Followers", "Error");
+                              } else if (snapshot.hasData) {
+                                // Safely cast the data to a Map<String, dynamic>
+                                var userData = snapshot.data!.data() as Map<String, dynamic>;
+                                var followers = userData['followers'] ?? [];
+                                return _buildStatColumn("Followers", (followers.length).toString());
+                              } else {
+                                return _buildStatColumn("Followers", "0");
+                              }
+                            },
+                          ),
                         ),
                         
-                        StreamBuilder<DocumentSnapshot>(
-                          stream: FirebaseFirestore.instance.collection('Users').doc(profileUserInformation.uid).snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return _buildStatColumn("Following", "?");
-                            } else if (snapshot.hasError) {
-                              return _buildStatColumn("Following", "Error");
-                            } else if (snapshot.hasData) {
-                              // Safely cast the data to a Map<String, dynamic>
-                              var userData = snapshot.data!.data() as Map<String, dynamic>;
-                              var following = userData['following'] ?? [];
-                              return _buildStatColumn("Following", (following.length).toString());
-                            } else {
-                              return _buildStatColumn("Following", "0");
-                            }
+                        GestureDetector(
+                          onTap : () {
+                            // Your callback code here
+                            log("Following clicked");
+                            Navigator.pushNamed(context, RouteNames.followingRoute, arguments: {'userId': profileUserInformation.uid});  
+                            // You can navigate to another screen or perform other actions
                           },
+                          child: StreamBuilder<DocumentSnapshot>(
+                            stream: FirebaseFirestore.instance.collection('Users').doc(profileUserInformation.uid).snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return _buildStatColumn("Following", "?");
+                              } else if (snapshot.hasError) {
+                                return _buildStatColumn("Following", "Error");
+                              } else if (snapshot.hasData) {
+                                // Safely cast the data to a Map<String, dynamic>
+                                var userData = snapshot.data!.data() as Map<String, dynamic>;
+                                var following = userData['following'] ?? [];
+                                return _buildStatColumn("Following", (following.length).toString());
+                              } else {
+                                return _buildStatColumn("Following", "0");
+                              }
+                            },
+                          ),
                         ),
                       ],
                     ),
