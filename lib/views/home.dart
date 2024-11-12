@@ -27,7 +27,8 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _notificationsButton() {
-    log("Unimplemented view");
+    log("_NotificationsButton");
+    navigatorKey.currentState?.pushNamed(RouteNames.notificationsScreenRoute);
   }
 
   void _profileButton() {

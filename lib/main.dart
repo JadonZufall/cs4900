@@ -26,6 +26,7 @@ import 'package:cs4900/views/profile/my_profile_settings.dart';
 import 'package:cs4900/views/profile/profile_followers.dart';
 import 'package:cs4900/views/search/search.dart';
 import 'package:cs4900/views/camera/upload.dart';
+import 'package:cs4900/views/notifications/notifications.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class RouteNames {
@@ -47,6 +48,7 @@ class RouteNames {
   static const String inboxScreenRoute = '/inbox';
   static const String followingRoute = 'following';
   static const String followersRoute = 'followers';
+  static const String notificationsScreenRoute = '/notifications';
 }
 
 class Router {
@@ -104,6 +106,8 @@ class Router {
         return MaterialPageRoute(builder: (_) => DirectMessagesScreen(recieverUserId: args['userId']!));
       case RouteNames.profilePictureScreenRoute:
         return MaterialPageRoute(builder: (_) => UploadTypeScreen(uploadType: UploadType.profilePictureUpload));
+      case RouteNames.notificationsScreenRoute:
+        return MaterialPageRoute(builder: (_) => NotificationsPage());
       default:
         return MaterialPageRoute(builder: (_) => Scaffold(
           body: Center(child: Text("No route defined for ${settings.name}"))
