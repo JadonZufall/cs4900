@@ -33,11 +33,11 @@ class NotificationScreenState extends State<NotificationScreen> {
 
     var notification;
 
-    if (index < numInactiveInbox) {
+    if (index < numActiveInbox) {
       notification = notificationList[0][index];
     }
     else {
-      notification = notificationList[1][index - numInactiveInbox];
+      notification = notificationList[1][index - numActiveInbox];
     }
 
     return NotificationItem(user: notification['user'], type: notification['type'], message: notification['message']);
@@ -59,6 +59,25 @@ class NotificationScreenState extends State<NotificationScreen> {
     List<dynamic> inactiveNotifications = await snap.get("InactiveNotifications");
 
     return [activeNotifications, inactiveNotifications];
+  }
+
+  Widget notificationScreenStreamBuilder(List<List<dynamic>> notifications) {
+    Widget loadingState = const Center(child: CircularProgressIndicator());
+
+    return StreamBuilder<DocumentSnapshot> (
+      stream: FirebaseFirestore.instance.collection("Notifications").doc(user!.uid).snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          log("Error in notification stream builder");
+        }
+        else if (snapshot.connectionState == ConnectionState.waiting) {
+          return buildNotificationScreen(notifications);
+        }
+        notifications[0] = snapshot.data!.get("ActiveNotifications");
+        notifications[1] = snapshot.data!.get("InactiveNotifications");
+        return buildNotificationScreen(notifications);
+      }
+    );
   }
 
   Widget buildNotificationScreen(List<List<dynamic>> notifications) {
@@ -155,7 +174,7 @@ class NotificationScreenState extends State<NotificationScreen> {
               log("Error: snapshot data is null");
               return loadingState;
             }
-            return buildNotificationScreen(snapshot.data!);
+            return notificationScreenStreamBuilder(snapshot.data!);
           }
           else {
             return loadingState;
