@@ -203,10 +203,7 @@ class PhotoDisplayComponent extends StatelessWidget {
       future: buildFutureElements(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          log("snapshot.data = " + snapshot.data.toString());
-          log("snapshot required data" + snapshot.requireData.toString());
           if (snapshot.data == null) {
-
             log("Error snapshot data is null");
             return loadingState;
           }

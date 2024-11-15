@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cs4900/Util/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cs4900/views/notifications/notification.dart';
 
 import 'package:cs4900/main.dart';
 import 'package:cs4900/auth.dart';
@@ -15,43 +18,62 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class NotificationScreenState extends State<NotificationScreen> {
-  // Placeholder data for notifications
-  final List<Map<String, String>> notifications = [
-    {
-      'type': 'like',
-      'user': 'user1',
-      'message': 'liked your post',
-      'profilePic': 'assets/images/bloop.jpg'
-    },
-    {
-      'type': 'comment',
-      'user': 'user2',
-      'message': 'commented: "Great photo!"',
-      'profilePic': 'assets/images/bloop.jpg'
-    },
-    {
-      'type': 'follow',
-      'user': 'user3',
-      'message': 'started following you',
-      'profilePic': 'assets/images/bloop.jpg'
-    },
-  ];
-
-  // Helper function to get the right icon based on notification type
-  IconData getIcon(String type) {
-    switch (type) {
-      case 'like':
-        return Icons.favorite;
-      case 'comment':
-        return Icons.message;
-      case 'follow':
-        return Icons.person;
-      default:
-        return Icons.notifications;
-    }
-  }
+  User? user = FirebaseAuth.instance.currentUser!;
+  var _future;
 
   @override
+  void initState() {
+    super.initState();
+    _future = getNotifications();
+  }
+
+  Widget getNotification(List<List<dynamic>> notificationList,int index) {
+    int numActiveInbox = notificationList[0].length;
+    int numInactiveInbox = notificationList[1].length;
+
+    var notification;
+
+    if (index < numInactiveInbox) {
+      notification = notificationList[0][index];
+    }
+    else {
+      notification = notificationList[1][index - numInactiveInbox];
+    }
+
+    return NotificationItem(user: notification['user'], type: notification['type'], message: notification['message']);
+  }
+
+  Future<List<List<dynamic>>> getNotifications() async {
+    user = await FirebaseAuth.instance.currentUser;
+    DocumentSnapshot snap = await FirebaseFirestore.instance.collection("Notifications").doc(user!.uid).get();
+
+    if(!snap.exists) {
+      await FirebaseFirestore.instance.collection("Notifications").doc(user!.uid).set({
+        "ActiveNotifications": [],
+        "InactiveNotifications": []
+      });
+      snap = await FirebaseFirestore.instance.collection("Notifications").doc(user!.uid).get();
+    }
+
+    List<dynamic> activeNotifications = await snap.get("ActiveNotifications");
+    List<dynamic> inactiveNotifications = await snap.get("InactiveNotifications");
+
+    return [activeNotifications, inactiveNotifications];
+  }
+
+  Widget buildNotificationScreen(List<List<dynamic>> notifications) {
+    return CustomScrollView(
+        slivers: [
+          SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return getNotification(notifications, index);
+            }, childCount: notifications[0].length + notifications[1].length),
+          )
+        ],
+      );
+  }
+
+  /*@override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -117,6 +139,41 @@ class NotificationScreenState extends State<NotificationScreen> {
           );
         },
       ),
+    );
+  }*/
+
+  Widget notificationScreenFutureBuilder() {
+    Widget loadingState = const Center(
+      child: CircularProgressIndicator(),
+    );
+
+    return FutureBuilder<List<List<dynamic>>>(
+        future: _future,
+        builder: (context, snapshot) {
+          if(snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.data == null) {
+              log("Error: snapshot data is null");
+              return loadingState;
+            }
+            return buildNotificationScreen(snapshot.data!);
+          }
+          else {
+            return loadingState;
+          }
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Notification'),
+        backgroundColor: const Color.fromRGBO(18, 25, 33, 1),
+        foregroundColor: Colors.white,
+      ),
+      body: Container(
+        child: notificationScreenFutureBuilder(),
+      )
     );
   }
 }
