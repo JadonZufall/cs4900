@@ -12,6 +12,8 @@ import 'package:cs4900/main.dart';
 import 'package:cs4900/models/user.dart';
 import 'package:cs4900/Util/app_colors.dart';
 
+import 'package:cs4900/models/notification_model.dart';
+
 class DirectMessagesScreen extends StatefulWidget {
   final String recieverUserId;
   final DocumentReference<Map<String, dynamic>>? messageLogReference;
@@ -93,7 +95,7 @@ class DirectMessagesScreenState extends State<DirectMessagesScreen> {
           SetOptions(merge: true)
       );
     }
-
+    NotificationModel.sendNotification(sender!.uid, widget.recieverUserId, "message", value);
   }
 
   Future<Map<String, dynamic>> buildInfo() async {

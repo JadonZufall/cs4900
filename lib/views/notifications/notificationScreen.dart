@@ -7,7 +7,14 @@ import 'package:cs4900/main.dart';
 import 'package:cs4900/auth.dart';
 import 'package:cs4900/views/signin.dart';
 
-class NotificationsPage extends StatelessWidget {
+class NotificationScreen extends StatefulWidget {
+  const NotificationScreen({super.key});
+
+  @override
+  NotificationScreenState createState() => NotificationScreenState();
+}
+
+class NotificationScreenState extends State<NotificationScreen> {
   // Placeholder data for notifications
   final List<Map<String, String>> notifications = [
     {
