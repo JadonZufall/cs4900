@@ -7,13 +7,17 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import {onRequest} from "firebase-functions/v2/https";
-import * as logger from "firebase-functions/logger";
+import {onDocumentUpdated} from "firebase-functions/v2/firestore";
+// import {getFirestore} from "firebase-admin/firestore";
+import * as admin from "firebase-admin";
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
+admin.initializeApp();
+// const db = getFirestore();
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+// Trigger this function when any document in
+// 'Notifications' is onDocumentUpdated
+export const sendNotification = onDocumentUpdated(
+  "Notifications/{userId}",
+  async (event) => {
+    console.log(event.params.userId);
+  });

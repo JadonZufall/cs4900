@@ -1,10 +1,13 @@
 import 'dart:developer';
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cs4900/Util/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cs4900/views/notifications/notification.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+
 
 import 'package:cs4900/main.dart';
 import 'package:cs4900/auth.dart';
@@ -28,6 +31,8 @@ class NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget getNotification(List<List<dynamic>> notificationList,int index) {
+
+
     int numActiveInbox = notificationList[0].length;
     int numInactiveInbox = notificationList[1].length;
 
