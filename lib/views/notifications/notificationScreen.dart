@@ -6,7 +6,6 @@ import 'package:cs4900/Util/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cs4900/views/notifications/notification.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 
 
 import 'package:cs4900/main.dart';
