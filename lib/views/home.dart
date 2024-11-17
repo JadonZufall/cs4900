@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cs4900/models/notification_services.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -7,8 +8,22 @@ import 'package:cs4900/main.dart';
 import 'package:cs4900/auth.dart';
 import 'package:cs4900/views/signin.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  HomeScreenState createState() => HomeScreenState();
+}
+
+class HomeScreenState extends State<HomeScreen> {
+  NotificationServices notificationServices = NotificationServices();
+
+  @override
+  void initState() {
+    notificationServices.getDeviceToken().then((value) {
+      log(value);
+    });
+  }
 
   void _signout(BuildContext context) {
     log("Signout event triggered.");

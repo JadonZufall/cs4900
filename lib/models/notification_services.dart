@@ -12,6 +12,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationServices {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
   static void sendNotification(String? senderUID, String? recipientUID, String? type, String? message) async {
     // Check if the recipient has ever had a notification document created for them
     DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection("Notifications").doc(recipientUID!).get();
@@ -38,4 +42,10 @@ class NotificationServices {
       "ActiveNotifications": FieldValue.arrayUnion([notification])
     });
   }
+
+  Future<String> getDeviceToken() async {
+    String? token = await messaging.getToken();
+    return token!;
+  }
+
 }

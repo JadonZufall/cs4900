@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cs4900/Util/app_colors.dart';
