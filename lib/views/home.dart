@@ -20,9 +20,10 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    notificationServices.getDeviceToken().then((value) {
-      log(value);
-    });
+    notificationServices.requestNotificationPermissions();
+    notificationServices.foregroundMessage();
+    notificationServices.firebaseInit(context);
+    notificationServices.isRefreshToken();
   }
 
   void _signout(BuildContext context) {

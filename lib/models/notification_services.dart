@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:ffi';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -45,7 +46,86 @@ class NotificationServices {
 
   Future<String> getDeviceToken() async {
     String? token = await messaging.getToken();
+    log(token!);
     return token!;
   }
 
+  void setDeviceToken(String token) async {
+    User? user = await FirebaseAuth.instance.currentUser;
+
+    FirebaseFirestore.instance.collection("Users").doc(user!.uid).set({
+      "device_token": token
+    },SetOptions(merge: true));
+  }
+
+  void isRefreshToken() async {
+    setDeviceToken(await getDeviceToken());
+
+    messaging.onTokenRefresh.listen((event) async {
+      log("Device token refreshed");
+      setDeviceToken(await getDeviceToken());
+    });
+  }
+
+  void requestNotificationPermissions() async {
+    if (Platform.isIOS) {
+      await messaging.requestPermission(
+        alert: true,
+        announcement: true,
+        badge: true,
+        carPlay: true,
+        criticalAlert: true,
+        provisional: true,
+        sound: true
+      );
+    }
+
+    NotificationSettings notifcationSettings = await messaging.requestPermission(
+        alert: true,
+        announcement: true,
+        badge: true,
+        carPlay: true,
+        criticalAlert: true,
+        provisional: true,
+        sound: true
+    );
+
+    if (notifcationSettings.authorizationStatus == AuthorizationStatus.authorized) {
+      log('user has granted permissions');
+    }
+    else if (notifcationSettings.authorizationStatus == AuthorizationStatus.provisional) {
+      log('user has granted provisional permissions');
+    }
+    else {
+      log('user has denied permissions');
+    }
+  }
+
+  Future foregroundMessage() async {
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+  void firebaseInit(BuildContext context) {
+    FirebaseMessaging.onMessage.listen((message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification!.android;
+
+      log(notification!.body.toString());
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
+          content: Text (
+            'hello',
+            style: TextStyle(fontSize: 16)
+          ),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    });
+  }
 }
