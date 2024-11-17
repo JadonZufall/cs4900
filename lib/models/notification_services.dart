@@ -117,13 +117,20 @@ class NotificationServices {
       log(notification!.body.toString());
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
-          content: Text (
+          content: const Text (
             'hello',
             style: TextStyle(fontSize: 16)
           ),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 4),
+          dismissDirection: DismissDirection.up,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 200,
+            left: 10,
+            right: 10
+          )
         ),
       );
     });
