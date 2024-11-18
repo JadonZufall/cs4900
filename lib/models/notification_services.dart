@@ -119,8 +119,8 @@ class NotificationServices {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
-          content: const Text (
-            'hello',
+          content: Text (
+            notification.body.toString(),
             style: TextStyle(fontSize: 16)
           ),
           duration: const Duration(seconds: 4),
