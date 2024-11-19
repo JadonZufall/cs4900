@@ -8,6 +8,7 @@ import 'package:cs4900/models/user.dart';
 import 'package:cs4900/views/profile/public_profile.dart';
 import 'package:path/path.dart';
 import 'package:cs4900/components/like_button.dart';
+import 'package:cs4900/components/comment_button.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -152,7 +153,20 @@ class PhotoDisplayComponent extends StatelessWidget {
         height: 28,
       ),
       onPressed: () {
-
+        showBottomSheet(backgroundColor: Colors.transparent,context: context, builder: (context){
+          return Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: DraggableScrollableSheet(
+              maxChildSize: 0.5,
+              initialChildSize: 0.5,
+              minChildSize: 0.2,
+              builder: (context, scrollController){
+                return Comment(); //snapshot['postId'], 'posts'
+              },
+            ),
+          );
+        },);
       }
     );
 
@@ -193,6 +207,24 @@ class PhotoDisplayComponent extends StatelessWidget {
         bottom
       ]
     );
+  }
+
+  Future<bool> Comments({
+    required String comment,
+    required String type,
+    required String uidd,
+  }) async{
+    DocumentReference docRef = FirebaseFirestore.instance.collection('comments').doc();
+    String commentUid = docRef.id;
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+    var userInfo = await db.collection("Users").doc(uid).get();
+    await db.collection(type).doc(uidd).collection('comments').doc(uid).set({
+      'comment': comment,
+      'username': userInfo.get("username"),
+      'profileImage': userInfo.get("profile_picture"),
+      'CommentUid': commentUid,
+    });
+    return true;
   }
 
   @override
