@@ -24,6 +24,7 @@ export const sendNotification = onDocumentUpdated(
     try {
       const userDoc = await db.collection("Users").doc(userId).get();
 
+
       if (!userDoc.exists) {
         console.error("No user with ID: ${userId}");
         return;
@@ -47,10 +48,35 @@ export const sendNotification = onDocumentUpdated(
         console.error("Notification doc does not exist");
       } else {
         const activeNotifications = notificationDoc.data()?.ActiveNotifications;
-        // const notificationType = notificationDoc.data()?.type;
-        // const sender = notificationDoc.data()?.user;
-        const notificationMessage =
+        const notificationType =
+          activeNotifications[activeNotifications.length - 1]["type"];
+        const notificationSender =
+          activeNotifications[activeNotifications.length - 1]["user"];
+        let notificationMessage =
           activeNotifications[activeNotifications.length - 1]["message"];
+
+        const senderUserDoc =
+          await db.collection("Users").doc(notificationSender).get();
+
+        const username = senderUserDoc.data()?.username;
+
+        switch (notificationType) {
+        case "message":
+          notificationMessage = username + " said: " + notificationMessage;
+          break;
+        case "like":
+          notificationMessage = username + " liked your post.";
+          break;
+        case "comment":
+          notificationMessage = username +
+            " commented on your post: " + notificationMessage;
+          break;
+        case "follow":
+          notificationMessage = username + " began following you.";
+          break;
+        default:
+          break;
+        }
 
         console.log(notificationMessage);
 
@@ -59,6 +85,10 @@ export const sendNotification = onDocumentUpdated(
           notification: {
             title: "Test Notification",
             body: notificationMessage,
+          },
+          data: {
+            sender: notificationSender,
+            type: notificationType,
           },
         };
 

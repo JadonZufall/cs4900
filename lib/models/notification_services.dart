@@ -116,6 +116,8 @@ class NotificationServices {
 
       log(notification!.body.toString());
 
+      log(message!.data.toString());
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: const Color.fromRGBO(32, 49, 68, 1),
