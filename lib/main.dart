@@ -6,6 +6,7 @@ import 'package:cs4900/views/notifications/notificationScreen.dart';
 import 'package:cs4900/views/profile/profile_following.dart';
 import 'package:cs4900/views/profile/profile_followers.dart';
 import 'package:cs4900/views/upload_type.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
@@ -27,6 +28,11 @@ import 'package:cs4900/views/profile/my_profile_settings.dart';
 import 'package:cs4900/views/profile/profile_followers.dart';
 import 'package:cs4900/views/search/search.dart';
 import 'package:cs4900/views/camera/upload.dart';
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class RouteNames {
@@ -124,6 +130,7 @@ void main() async {
   log("found ${cameras.length} cameras");
   primaryCamera = cameras.first;
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
 
