@@ -37,10 +37,10 @@ class NotificationScreenState extends State<NotificationScreen> {
     var notification;
 
     if (index < numActiveInbox) {
-      notification = notificationList[0][index];
+      notification = notificationList[0][numActiveInbox - index - 1];
     }
     else {
-      notification = notificationList[1][index - numActiveInbox];
+      notification = notificationList[1][numInactiveInbox - (index - numActiveInbox) - 1];
     }
 
     return NotificationItem(user: notification['user'], type: notification['type'], message: notification['message']);
