@@ -162,7 +162,7 @@ class PhotoDisplayComponent extends StatelessWidget {
               initialChildSize: 0.5,
               minChildSize: 0.2,
               builder: (context, scrollController){
-                return Comment(); //snapshot['postId'], 'posts'
+                return Comment(imageId: imageId, uid: FirebaseAuth.instance.currentUser!.uid); //snapshot['postId'], 'posts'
               },
             ),
           );
